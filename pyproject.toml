@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "memory-recall-bench"
+version = "0.1.0"
+description = "Measure whether a chat-memory layer keeps the facts it will need. Offline, deterministic, CI-friendly."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [{ name = "Deepanjal Shukla" }]
+keywords = ["llm", "memory", "evaluation", "benchmark", "rag", "agents", "longmemeval"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Topic :: Software Development :: Testing",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.scripts]
+mrb = "memory_recall_bench.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/memory_recall_bench"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
