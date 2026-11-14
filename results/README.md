@@ -38,3 +38,21 @@ answer session is in context (what a multi-session question actually needs).
    (embedding retrieval, per-session summaries).
 
 Reproduce: `mrb --data longmemeval_s_cleaned.json --budgets 4k,16k,64k --by-kind [--all-evidence]` (about 3 minutes on a laptop).
+
+## Pilot: embedding retrieval on preference questions (BM25's weakest type)
+
+`single-session-preference`, all 30 questions, `BAAI/bge-small-en-v1.5` on CPU (first 512 characters of each message,
+bge query instruction). Script: [`preference_embedding_pilot.py`](preference_embedding_pilot.py); output:
+[`preference_embedding_pilot.json`](preference_embedding_pilot.json).
+
+| Adapter | 4k | 16k |
+|---|---|---|
+| fifo | 7% | 10% |
+| recent+bm25 | 47% [30–63] | 77% [60–90] |
+| **recent+embed** | **80%** [63–93] | **93%** [83–100] |
+| recent+hybrid (BM25 + embedding, RRF) | 67% [50–83] | 93% [83–100] |
+
+Preference questions ("can you recommend…") share meaning but not words with where the preference was stated, so
+embeddings fix BM25's weakest case. At the tight 4k budget, fusing in BM25 *hurts* (67% vs 80%): when only a few
+messages fit, a weak ranking signal crowds out a strong one. n=30, so intervals are wide; the full 479-question run
+with all retrievers is pending.
