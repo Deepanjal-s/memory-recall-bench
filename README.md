@@ -95,6 +95,18 @@ cache.save("vectors.npz")   # embed once (e.g. on a GPU), reuse everywhere
 - Subclass `RankedRetriever` and implement `rank(query, archive)` to benchmark your own retriever with the same
   recent-window and budget logic.
 
+## Benchmark a system written in another language
+
+```python
+from memory_recall_bench.external import export_conversations, RankedFromFile
+export_conversations(convs, "convs.jsonl")     # 1. give your system the conversations
+# 2. your system writes {"<conversation id>": ["<message id>", ...best first...]} to rankings.json
+run([lambda: RankedFromFile("rankings.json", convs, name="my-app")], convs, budgets=[4000, 16000])
+```
+
+The rankings go through the same recent-window, pairing and budget rules as the built-in retrievers, so the
+comparison is like-for-like. A missing conversation raises an error rather than silently scoring zero.
+
 ## Built-in baselines
 
 | Adapter | Behaviour |

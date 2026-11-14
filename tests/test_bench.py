@@ -181,3 +181,21 @@ def test_cli_by_kind_and_all_evidence(capsys):
     assert main(["--limit", "4", "--budgets", "2k", "--by-kind", "--all-evidence"]) == 0
     out = capsys.readouterr().out
     assert "All-evidence recall" in out and "[synthetic]" in out
+
+
+def test_external_rankings_round_trip(tmp_path):
+    from memory_recall_bench.external import RankedFromFile, export_conversations
+    convs = CONVS[:5]
+    export_conversations(convs, tmp_path / "c.jsonl")
+    lines = [json.loads(line) for line in (tmp_path / "c.jsonl").read_text(encoding="utf-8").splitlines()]
+    assert [line["id"] for line in lines] == [c.id for c in convs]
+    assert sum(len(s["messages"]) for s in lines[0]["sessions"]) == len(convs[0].messages)
+    # A "perfect" external system: ranks the evidence first. It must recall everything.
+    rankings = {c.id: sorted((m.id for m in c.messages), key=lambda i: i not in c.evidence_ids) for c in convs}
+    (tmp_path / "r.json").write_text(json.dumps(rankings), encoding="utf-8")
+    res = run([lambda: RankedFromFile(tmp_path / "r.json", convs, name="perfect")], convs, [600])
+    assert all(r.recalled for r in res) and all(r.context_tokens <= 600 for r in res)
+    # Missing conversations are an error, not a silent zero.
+    (tmp_path / "bad.json").write_text("{}", encoding="utf-8")
+    with pytest.raises(KeyError):
+        RankedFromFile(tmp_path / "bad.json", convs)
