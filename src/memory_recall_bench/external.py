@@ -18,7 +18,9 @@ from .types import Conversation, Message
 
 
 def export_conversations(conversations: list[Conversation], path: str | Path) -> None:
-    with open(path, "w", encoding="utf-8") as f:
+    # ensure_ascii escapes U+2028/U+2029, which some line readers (e.g. Node's readline)
+    # treat as line breaks; newline="\n" avoids "\r\n" line endings on Windows.
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
         for c in conversations:
             sessions: dict[str, list[dict]] = {}
             for m in c.messages:
@@ -27,7 +29,7 @@ def export_conversations(conversations: list[Conversation], path: str | Path) ->
             f.write(json.dumps({
                 "id": c.id, "question": c.question, "kind": c.kind,
                 "sessions": [{"id": sid, "messages": msgs} for sid, msgs in sessions.items()],
-            }, ensure_ascii=False) + "\n")
+            }, ensure_ascii=True) + "\n")
 
 
 class RankedFromFile(RankedRetriever):

@@ -199,3 +199,18 @@ def test_external_rankings_round_trip(tmp_path):
     (tmp_path / "bad.json").write_text("{}", encoding="utf-8")
     with pytest.raises(KeyError):
         RankedFromFile(tmp_path / "bad.json", convs)
+
+
+def test_export_is_one_line_per_conversation_even_with_unicode_line_separators(tmp_path):
+    from memory_recall_bench import Conversation, Message
+    from memory_recall_bench.external import export_conversations
+    tricky = "first part\u2028second part\u2029third\u0085fourth \r\n end"
+    conv = Conversation("u", [Message("s1:0", "user", tricky, 10)], "q?", "a", frozenset({"s1:0"}))
+    export_conversations([conv, conv], tmp_path / "c.jsonl")
+    raw = (tmp_path / "c.jsonl").read_bytes()
+    assert b"\r\n" not in raw
+    text = raw.decode("ascii")  # everything escaped
+    lines = text.split("\n")
+    assert lines[-1] == "" and len(lines) == 3
+    assert json.loads(lines[0])["sessions"][0]["messages"][0]["content"] == tricky
+    assert len(text.splitlines()) == 2  # splitlines() also splits on U+2028 etc.; must still be 2
