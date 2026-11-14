@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "memory-recall-bench"
-version = "0.1.0"
+version = "0.2.0"
 description = "Measure whether a chat-memory layer keeps the facts it will need. Offline, deterministic, CI-friendly."
 readme = "README.md"
 license = "MIT"
@@ -20,6 +20,7 @@ dependencies = []
 
 [project.optional-dependencies]
 dev = ["pytest>=8"]
+llamaindex = ["llama-index-core>=0.14,<0.15"]
 
 [project.scripts]
 mrb = "memory_recall_bench.cli:main"

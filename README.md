@@ -18,7 +18,7 @@ $ mrb --data longmemeval_dev.json --budgets 2k,8k,64k
 
 adapter                        2k                8k               64k
 fifo                  4% [0%-10%]       8% [2%-16%]     58% [44%-72%]
-flush                  2% [0%-6%]       4% [0%-10%]     44% [30%-58%]
+flush                  0% [0%-0%]       4% [0%-10%]     44% [30%-58%]
 recent+bm25         86% [76%-94%]    98% [94%-100%]  100% [100%-100%]
 recent+random         4% [0%-10%]       4% [0%-10%]     58% [44%-72%]
 ```
@@ -53,27 +53,40 @@ print(summarize(run([MyMemory, FIFO, RecentPlusRandom], convs, budgets=[4000, 16
 The runner **rejects adapters that exceed the budget** (returning everything would trivially score 100%) and
 ids that don't exist.
 
+## Score real libraries
+
+```bash
+pip install "memory-recall-bench[llamaindex]"
+mrb --data longmemeval_dev.json --adapters fifo,llamaindex,recent+bm25
+```
+
+`llamaindex` wraps the real `llama_index.core.memory.Memory` (default configuration, no memory blocks), with the
+benchmark's token counter passed as `tokenizer_fn` so both sides agree on sizes. Message ids are recovered by aligning
+`Memory.get()` with the most recent messages and checking that their text matches; they are *not* stored in
+`additional_kwargs`, because `Memory` counts those as tokens and that would change what's being measured.
+
 ## Built-in baselines
 
 | Adapter | Behaviour |
 |---|---|
 | `fifo` | Most recent messages that fit |
-| `flush` | llama_index-style `Memory`: past 70% of the limit, move the oldest messages out in 3000-token chunks |
+| `flush` | Dependency-free port of llama_index `Memory`'s queue logic. **Verified message-for-message against the real library** in CI (`tests/test_llamaindex.py`) |
 | `flush-10pct` | Same, with the flush size scaled to 10% of the history budget |
 | `recent+bm25` | Half the budget for recent messages, half for archived messages ranked by BM25 against the question |
 | `recent+random` | **Control**: same split, random archive messages. If your retriever doesn't beat this, the gain is budget, not retrieval |
 
 ## How the measurements are checked
 
-- FIFO has an exact closed form, and the test suite checks that the runner reproduces it on every case.
+- FIFO has an exact closed form; the tests pin FIFO's exact output, and that test was checked by deliberately breaking FIFO.
+- The `flush` baseline must produce exactly the same context as the real llama_index `Memory` (68/68 cases in development; enforced in CI).
 - Recall is reported with 95% bootstrap confidence intervals, because small benchmarks are noisy.
 - Token counts use a deterministic approximation (characters / 4) by default; pass your own counter to the loader.
 
 ## Finding: default flush settings waste half the context
 
 With `token_limit=3644` (what llama_index chat engines use for a 3,900-token model) the history limit is about 2,551
-tokens, smaller than the 3000-token default flush, so each flush empties the history. Averaged over 50 LongMemEval
-conversations, the history is **46% full**; a budget-scaled flush keeps it **88% full**
+tokens, smaller than the 3000-token default flush, so each flush throws away everything except the latest exchange.
+Averaged over 50 LongMemEval conversations, the history is only **55% full**; a budget-scaled flush keeps it **87% full**
 (see [llama_index#24117](https://github.com/run-llama/llama_index/issues/24117)). This is a regression test here
 (`test_default_flush_size_underfills_small_budgets`).
 
@@ -91,8 +104,15 @@ answer-bearing turns with `has_answer`. A small synthetic dataset is built in fo
 ## Development
 
 ```bash
-pip install -e ".[dev]"
+pip install -e ".[dev,llamaindex]"   # drop llamaindex to skip the library-equivalence tests
 pytest
 ```
+
+## Changelog
+
+- **0.2.0**: real llama_index `Memory` adapter; the `flush` baseline is now an exact port of the library's queue logic
+  (0.1.0 used a simplified model that emptied the whole history on each flush, which overstated the under-fill:
+  46% → actually 55%).
+- **0.1.0**: first release.
 
 MIT licensed.

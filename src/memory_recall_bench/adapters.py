@@ -5,7 +5,6 @@ They double as baselines: run your own adapter next to them to see where it sits
 from __future__ import annotations
 
 import random
-from collections import deque
 from typing import Sequence
 
 from .bm25 import BM25, tokenize
@@ -35,12 +34,19 @@ class FIFO:
 
 
 class FlushToArchive:
-    """llama_index-style ``Memory``: when the active history exceeds ``ratio * budget``,
-    move the oldest messages out until at least ``flush_size`` tokens are gone.
-    Flushed messages are not returned (no memory blocks configured).
+    """A dependency-free port of llama_index ``Memory``'s queue ("waterfall") logic,
+    without memory blocks (flushed messages leave the context).
 
-    ``flush_size=None`` reproduces the library default of 3000 tokens (lowered only when
-    it exceeds the budget). Pass e.g. ``flush_fraction=0.1`` to scale it to the budget.
+    Mirrors ``Memory._manage_queue`` in llama-index-core 0.14.x: when the active
+    history exceeds ``ratio * budget``, oldest messages are flushed in chunks of at
+    least ``flush_size`` tokens; at least one message is always kept; the remaining
+    history must start with a user message; and if that would leave nothing, the last
+    complete user turn is restored. ``tests/test_llamaindex.py`` checks that this
+    produces exactly the same context as the real library.
+
+    ``flush_size=None`` reproduces ``Memory.from_defaults``: 3000 tokens, or
+    ``int(0.7 * budget)`` when 3000 exceeds the budget. ``flush_fraction=0.1`` instead
+    scales the flush size to 10% of the history limit.
     """
 
     def __init__(self, flush_size: int | None = None, flush_fraction: float | None = None, ratio: float = 0.7):
@@ -50,24 +56,59 @@ class FlushToArchive:
     def reset(self, budget_tokens: int) -> None:
         self.limit = budget_tokens * self.ratio
         if self.flush_fraction is not None:
-            size = int(self.limit * self.flush_fraction)
+            size = max(1, int(self.limit * self.flush_fraction))
         else:
             size = self.flush_size if self.flush_size is not None else 3000
-        self._flush = max(1, min(size, budget_tokens))
-        self.active: deque[Message] = deque()
+            if size > budget_tokens:  # same rule as Memory.from_defaults
+                size = int(budget_tokens * 0.7)
+        self._flush = size
+        self.active: list[Message] = []
         self.used = 0
         self.fill_trace: list[int] = []
 
     def add(self, message: Message) -> None:
         self.active.append(message)
-        self.used += message.tokens
-        if self.used > self.limit:
-            removed = 0
-            while self.active and (removed < self._flush or self.used > self.limit):
-                gone = self.active.popleft()
-                removed += gone.tokens
-                self.used -= gone.tokens
+        self._manage_queue()
+        self.used = sum(m.tokens for m in self.active)
         self.fill_trace.append(self.used)
+
+    def _manage_queue(self) -> None:
+        queue = self.active
+        tokens = sum(m.tokens for m in queue)
+        if tokens <= self.limit:
+            return
+        rev = queue[::-1]  # newest first; pop() takes the oldest
+        to_remove = tokens - self.limit
+        archived = 0  # the library archives the N *oldest* stored rows each round
+        while to_remove > 0:
+            if len(rev) <= 1:
+                break
+            flushed: list[Message] = []
+            flushed_tokens = 0
+            while flushed_tokens < self._flush and rev and len(rev) > 1:
+                m = rev.pop()
+                flushed.append(m)
+                flushed_tokens += m.tokens
+            if not rev and flushed:
+                rev.append(flushed.pop())
+            chrono = rev[::-1]
+            if chrono:
+                while chrono and chrono[0].role != "user" and len(rev) > 1:
+                    flushed.append(rev.pop())
+                    chrono = rev[::-1]
+                if (not rev or (len(rev) == 1 and rev[0].role != "user")) and flushed:
+                    if rev and rev[0].role != "user":
+                        flushed.append(rev.pop(0))
+                    start = next((i for i in range(len(flushed) - 1, -1, -1) if flushed[i].role == "user"), -1)
+                    if start >= 0:
+                        turn = flushed[start:]
+                        flushed = flushed[:start]
+                        rev = turn[::-1] + rev
+            archived += len(flushed)
+            to_remove = sum(m.tokens for m in rev) - self.limit
+            if not flushed:
+                break
+        self.active = queue[archived:]
 
     def context(self, query: str) -> Sequence[str]:
         return [m.id for m in self.active]
@@ -165,10 +206,16 @@ class RecentPlusRandom(_RecentPlusArchive):
         return self._fill(shuffled, window, used)
 
 
+def _llamaindex():
+    from .integrations.llamaindex import LlamaIndexMemory  # needs the [llamaindex] extra
+    return LlamaIndexMemory()
+
+
 BUILTIN = {
     "fifo": FIFO,
     "flush": FlushToArchive,
     "flush-10pct": lambda: FlushToArchive(flush_fraction=0.1),
     "recent+bm25": RecentPlusBM25,
     "recent+random": RecentPlusRandom,
+    "llamaindex": _llamaindex,
 }
