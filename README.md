@@ -97,6 +97,10 @@ cache.save("vectors.npz")   # embed once (e.g. on a GPU), reuse everywhere
 
 ## Benchmark a system written in another language
 
+> **Real use:** this interface found a ranking bug in a Next.js + PostgreSQL app's search and measured the fix
+> (answer kept in a 4k context: 56% → 85% over 479 questions). See [`results/`](results/).
+
+
 ```python
 from memory_recall_bench.external import export_conversations, RankedFromFile
 export_conversations(convs, "convs.jsonl")     # 1. give your system the conversations

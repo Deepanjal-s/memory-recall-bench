@@ -56,3 +56,23 @@ Preference questions ("can you recommend…") share meaning but not words with w
 embeddings fix BM25's weakest case. At the tight 4k budget, fusing in BM25 *hurts* (67% vs 80%): when only a few
 messages fit, a weak ranking signal crowds out a strong one. n=30, so intervals are wide; the full 479-question run
 with all retrievers is pending.
+
+## Case study: finding and fixing a ranking bug in a real app
+
+[ai-chat-memory](https://github.com/Deepanjal-s/ai-chat-memory) (Next.js + PostgreSQL) was scored through the
+external-rankings interface: its own import pipeline and `search()` ran over every conversation
+(`scripts/bench-rankings.ts` in that repo), and the rankings went through the same recent-window and budget rules.
+
+**Finding:** its keyword search ranked with PostgreSQL `ts_rank_cd` plus a flat bonus for matching all terms. That has
+no IDF, so it kept the answer in a 4k context far less often than plain BM25.
+
+**Fix:** Postgres still selects candidates; BM25 (with document frequencies from the same filters) orders them.
+
+| 479 questions | 4k any | 4k all | 16k all | 64k all |
+|---|---|---|---|---|
+| before (`ts_rank_cd`) | 56% | 28% | 65% | 95% |
+| **after (BM25 re-rank)** | **85%** | **61%** | **86%** | **97%** |
+| reference `recent+bm25` | 82% | 61% | 82% | 94% |
+
+Paired, all-evidence at 4k: **163 questions fixed, 8 broken**. Per-question results:
+[`ai_chat_memory_before_after.json`](ai_chat_memory_before_after.json).
