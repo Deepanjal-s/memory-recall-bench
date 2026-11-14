@@ -1,5 +1,7 @@
 # memory-recall-bench
 
+[![CI](https://github.com/Deepanjal-s/memory-recall-bench/actions/workflows/ci.yml/badge.svg)](https://github.com/Deepanjal-s/memory-recall-bench/actions/workflows/ci.yml) ![license](https://img.shields.io/badge/license-MIT-blue) ![dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)
+
 **Does your chatbot's memory keep the facts it will need?**
 
 Chat-memory layers (sliding windows, flush-to-archive buffers, summarizers, vector stores) decide which old
