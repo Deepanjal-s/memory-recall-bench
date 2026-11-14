@@ -54,8 +54,33 @@ bge query instruction). Script: [`preference_embedding_pilot.py`](preference_emb
 
 Preference questions ("can you recommend…") share meaning but not words with where the preference was stated, so
 embeddings fix BM25's weakest case. At the tight 4k budget, fusing in BM25 *hurts* (67% vs 80%): when only a few
-messages fit, a weak ranking signal crowds out a strong one. n=30, so intervals are wide; the full 479-question run
-with all retrievers is pending.
+messages fit, a weak ranking signal crowds out a strong one. n=30, so intervals are wide; the full run below
+confirms the numbers (the preference rows are identical).
+
+## Full run: BM25 vs embeddings vs hybrid (all 479 questions, GPU)
+
+Same embedding setting as the pilot (`bge-small-en-v1.5`, first 512 characters), all 183,194 distinct messages,
+embedded on a Kaggle T4 in 7 minutes. Notebook:
+[Chat Memory Retrieval on LongMemEval](https://www.kaggle.com/code/deepanjalshukla95/chat-memory-retrieval-on-longmemeval);
+per-question output: [`longmemeval_s_embeddings_gpu.csv`](longmemeval_s_embeddings_gpu.csv).
+
+Evidence from **every** answer session kept (95% bootstrap CI):
+
+| Adapter | 4k | 16k | 64k |
+|---|---|---|---|
+| recent+bm25 | 61% [56–65] | 82% [79–86] | 94% [91–96] |
+| recent+embed | 59% [55–63] | 89% [86–92] | 99% [98–100] |
+| **recent+hybrid** | **63%** [59–67] | **90%** [87–92] | **99%** [98–100] |
+
+Per question against BM25 (all-evidence): hybrid at 16k fixes 37 and breaks 1; at 4k it fixes 39 and breaks 28.
+Embedding alone at 4k fixes 57 but breaks 65, so it is not simply better: it wins on preference questions
+(80% vs 47%) and multi-session any-evidence (86% vs 78%), and loses on knowledge-update all-evidence (64% vs 75%),
+where the exact words of the updated fact matter.
+
+What it means for an app: if you can afford one retriever, BM25 is the cheap strong baseline; adding embeddings
+with rank fusion is the safe upgrade at 16k and above (almost no regressions). The hard cases left are
+multi-session at 4k (35–36% all-evidence for every method), which needs something other than ranking single messages, such
+as per-session summaries.
 
 ## Case study: finding and fixing a ranking bug in a real app
 
