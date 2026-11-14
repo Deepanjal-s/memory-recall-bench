@@ -5,3 +5,4 @@ dist/
 build/
 *.json
 !.github/**
+!results/*.json

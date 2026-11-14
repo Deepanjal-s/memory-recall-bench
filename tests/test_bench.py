@@ -159,3 +159,25 @@ def test_bm25_pairing_brings_the_reply_partner_and_respects_budget():
     idx = [m.id for m in conv.messages].index(ev)
     partner = conv.messages[idx + 1 if conv.messages[idx].role == "user" else idx - 1].id
     assert partner in ids_p
+
+
+def test_all_evidence_requires_every_group():
+    from memory_recall_bench import Conversation, Message
+    msgs = [Message(f"m{i}", "user" if i % 2 == 0 else "assistant", f"text {i}", 10) for i in range(10)]
+    conv = Conversation("multi", msgs, "q?", "a", frozenset({"m0", "m8"}), kind="multi-session",
+                        evidence_groups=(frozenset({"m0"}), frozenset({"m8"})))
+    r = run([FIFO], [conv], [30])[0]  # keeps m7..m9: has m8, not m0
+    assert r.recalled and not r.recalled_all
+    rows = summarize([r], by_kind=True, metric="recalled_all")
+    assert rows[0]["kind"] == "multi-session" and rows[0]["recall"] == 0
+
+
+def test_single_group_default_makes_both_metrics_equal():
+    for r in run([FIFO, RecentPlusBM25], CONVS, [2000]):
+        assert r.recalled == r.recalled_all
+
+
+def test_cli_by_kind_and_all_evidence(capsys):
+    assert main(["--limit", "4", "--budgets", "2k", "--by-kind", "--all-evidence"]) == 0
+    out = capsys.readouterr().out
+    assert "All-evidence recall" in out and "[synthetic]" in out

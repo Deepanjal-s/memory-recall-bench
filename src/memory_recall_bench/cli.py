@@ -24,6 +24,9 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--budgets", default="2k,8k,32k", help="Comma-separated, e.g. 2k,8k,32000")
     p.add_argument("--adapters", default="fifo,flush,recent+random,recent+bm25",
                    help=f"Comma-separated from: {', '.join(BUILTIN)}")
+    p.add_argument("--by-kind", action="store_true", help="One table per question type.")
+    p.add_argument("--all-evidence", action="store_true",
+                   help="Count a hit only if evidence from every answer session is in context.")
     p.add_argument("--json", metavar="PATH", help="Also write per-conversation results as JSON.")
     args = p.parse_args(argv)
 
@@ -33,20 +36,26 @@ def main(argv: list[str] | None = None) -> int:
 
     convs = load_longmemeval(args.data, limit=args.limit) if args.data else synthetic(n=args.limit or 20)
     results = run([BUILTIN[a] for a in args.adapters.split(",")], convs, _budgets(args.budgets))
-    rows = summarize(results)
+    metric = "recalled_all" if args.all_evidence else "recalled"
+    rows = summarize(results, by_kind=args.by_kind, metric=metric)
 
-    budgets = sorted({r["budget"] for r in rows})
-    adapters = list(dict.fromkeys(r["adapter"] for r in rows))
-    table = {(r["adapter"], r["budget"]): r for r in rows}
-    width = max(len(a) for a in adapters) + 2
-    print(f"{len(convs)} conversations. Evidence recall (95% CI):\n")
-    print("adapter".ljust(width) + "".join(f"{b // 1000}k".rjust(18) for b in budgets))
-    for a in adapters:
-        cells = []
-        for b in budgets:
-            r = table[(a, b)]
-            cells.append(f"{r['recall']:.0%} [{r['ci_low']:.0%}-{r['ci_high']:.0%}]".rjust(18))
-        print(a.ljust(width) + "".join(cells))
+    label = "All-evidence recall" if args.all_evidence else "Evidence recall"
+    print(f"{len(convs)} conversations. {label} (95% CI):")
+    for kind in dict.fromkeys(r["kind"] for r in rows):
+        sub = [r for r in rows if r["kind"] == kind]
+        budgets = sorted({r["budget"] for r in sub})
+        adapters = list(dict.fromkeys(r["adapter"] for r in sub))
+        table = {(r["adapter"], r["budget"]): r for r in sub}
+        width = max(len(a) for a in adapters) + 2
+        if args.by_kind:
+            print(f"\n[{kind}] n={sub[0]['n']}")
+        else:
+            print()
+        print("adapter".ljust(width) + "".join(f"{b // 1000}k".rjust(18) for b in budgets))
+        for a in adapters:
+            cells = [f"{table[(a, b)]['recall']:.0%} [{table[(a, b)]['ci_low']:.0%}-{table[(a, b)]['ci_high']:.0%}]".rjust(18)
+                     for b in budgets]
+            print(a.ljust(width) + "".join(cells))
     if args.json:
         with open(args.json, "w", encoding="utf-8") as f:
             json.dump({"summary": rows, "results": to_records(results)}, f, indent=2)

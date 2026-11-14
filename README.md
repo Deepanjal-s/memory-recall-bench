@@ -27,6 +27,18 @@ recent+random         4% [0%-10%]       4% [0%-10%]     58% [44%-72%]
 [Kaggle notebook](https://www.kaggle.com/code/deepanjalshukla95/what-does-your-chatbot-forget) exactly for FIFO, flush and BM25.
 That split has only `single-session-user` questions, which flatter keyword retrieval; see Limitations.)*
 
+## Results on the full benchmark
+
+On all 479 labelled LongMemEval_s questions (~115k tokens of history each), at a 16k budget:
+
+| | FIFO | llama_index `Memory` | Recent + BM25 |
+|---|---|---|---|
+| any answer message kept | 26% | 14% | **94%** |
+| evidence from *every* answer session kept | 7% | 4% | **82%** |
+
+Keyword retrieval is weakest on **preference** questions (77%) and **multi-session** questions needing several facts
+(62% all-evidence). Full tables, per-type breakdown and raw per-question results are in [`results/`](results/).
+
 ## Plug in your own memory
 
 Implement three methods. Anything with them is a `MemoryAdapter`:
@@ -57,7 +69,7 @@ ids that don't exist.
 
 ```bash
 pip install "memory-recall-bench[llamaindex]"
-mrb --data longmemeval_dev.json --adapters fifo,llamaindex,recent+bm25
+mrb --data longmemeval_s_cleaned.json --adapters fifo,llamaindex,recent+bm25 --by-kind
 ```
 
 `llamaindex` wraps the real `llama_index.core.memory.Memory` (default configuration, no memory blocks), with the
@@ -110,6 +122,8 @@ pytest
 
 ## Changelog
 
+- **0.3.0**: `recalled_all` metric (evidence from every answer session), `--by-kind` and `--all-evidence` CLI options,
+  full LongMemEval_s results in `results/`.
 - **0.2.0**: real llama_index `Memory` adapter; the `flush` baseline is now an exact port of the library's queue logic
   (0.1.0 used a simplified model that emptied the whole history on each flush, which overstated the under-fill:
   46% → actually 55%).

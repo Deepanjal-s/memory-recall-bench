@@ -31,6 +31,13 @@ class Conversation:
     evidence_ids: frozenset[str]
     kind: str = "unknown"
     meta: dict = field(default_factory=dict)
+    # Evidence split into groups that are each needed (e.g. one group per answer session
+    # for multi-session questions). Defaults to a single group holding all evidence.
+    evidence_groups: tuple[frozenset[str], ...] = ()
+
+    def __post_init__(self) -> None:
+        if not self.evidence_groups:
+            self.evidence_groups = (frozenset(self.evidence_ids),)
 
     @property
     def total_tokens(self) -> int:

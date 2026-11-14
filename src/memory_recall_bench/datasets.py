@@ -13,23 +13,27 @@ def load_longmemeval(path: str | Path, count_tokens: TokenCounter = approx_token
     """Load a LongMemEval JSON file (any split: dev, _s, _m, _oracle).
 
     LongMemEval (Wu et al., 2024, MIT) marks answer-bearing turns with ``has_answer``.
-    Questions with no marked turn (e.g. abstention questions) are skipped.
+    Questions with no marked turn (e.g. abstention questions) are skipped. Evidence is
+    grouped by session: a multi-session question needs evidence from every answer session.
     """
     data = json.loads(Path(path).read_text(encoding="utf-8"))
     out: list[Conversation] = []
     for q in data:
         messages, evidence = [], set()
+        groups: dict[str, set[str]] = {}
         for s_idx, (sid, session) in enumerate(zip(q["haystack_session_ids"], q["haystack_sessions"])):
             for t_idx, turn in enumerate(session):
                 mid = f"{sid}:{t_idx}" if sid else f"s{s_idx}:{t_idx}"
                 messages.append(Message(mid, turn["role"], turn["content"], count_tokens(turn["content"])))
                 if turn.get("has_answer"):
                     evidence.add(mid)
+                    groups.setdefault(f"{sid or s_idx}", set()).add(mid)
         if not evidence:
             continue
         out.append(Conversation(
             id=q["question_id"], messages=messages, question=q["question"], answer=str(q["answer"]),
             evidence_ids=frozenset(evidence), kind=q.get("question_type", "unknown"),
+            evidence_groups=tuple(frozenset(g) for g in groups.values()),
         ))
         if limit and len(out) >= limit:
             break
