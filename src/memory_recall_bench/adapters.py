@@ -148,27 +148,10 @@ class _RecentPlusArchive:
                 used += m.tokens
         return kept
 
-
-class RecentPlusBM25(_RecentPlusArchive):
-    """Recent window + archived messages ranked by BM25 against the query."""
-
-    name = "recent+bm25"
-
-    def __init__(self, recent_share: float = 0.5, pair: bool = True):
-        super().__init__(recent_share)
-        self.pair = pair
-
-    def context(self, query: str) -> Sequence[str]:
-        window, archive, used = self._split()
-        if not archive:
-            return [m.id for m in window]
-        scores = BM25([tokenize(m.content) for m in archive]).scores(tokenize(query))
-        ranked = [m for s, m in sorted(zip(scores, archive), key=lambda x: -x[0]) if s > 0]
-        if not self.pair:
-            return self._fill(ranked, window, used)
-
-        # Bring each hit's reply partner (user -> next message, assistant -> previous)
-        # so retrieved exchanges stay readable. Groups that don't fit are skipped.
+    def _fill_pairs(self, ranked: list[Message], window: list[Message], used: int) -> list[str]:
+        """Like _fill, but each hit brings its reply partner (user -> next message,
+        assistant -> previous) so retrieved exchanges stay readable. Groups that don't
+        fit are skipped."""
         position = {m.id: i for i, m in enumerate(self.messages)}
         kept = [m.id for m in window]
         kept_set = set(kept)
@@ -186,6 +169,38 @@ class RecentPlusBM25(_RecentPlusArchive):
                 kept_set.add(g.id)
             used += cost
         return kept
+
+
+class RankedRetriever(_RecentPlusArchive):
+    """Base for retrieval strategies: a recent window plus the archive ranked by
+    :meth:`rank`. Subclass and implement ``rank(query, archive) -> list[Message]``
+    (best first; omit messages you would never retrieve)."""
+
+    name = "ranked"
+
+    def __init__(self, recent_share: float = 0.5, pair: bool = True):
+        super().__init__(recent_share)
+        self.pair = pair
+
+    def rank(self, query: str, archive: list[Message]) -> list[Message]:  # pragma: no cover
+        raise NotImplementedError
+
+    def context(self, query: str) -> Sequence[str]:
+        window, archive, used = self._split()
+        if not archive:
+            return [m.id for m in window]
+        ranked = self.rank(query, archive)
+        return self._fill_pairs(ranked, window, used) if self.pair else self._fill(ranked, window, used)
+
+
+class RecentPlusBM25(RankedRetriever):
+    """Recent window + archived messages ranked by BM25 against the query."""
+
+    name = "recent+bm25"
+
+    def rank(self, query: str, archive: list[Message]) -> list[Message]:
+        scores = BM25([tokenize(m.content) for m in archive]).scores(tokenize(query))
+        return [m for s, m in sorted(zip(scores, archive), key=lambda x: -x[0]) if s > 0]
 
 
 class RecentPlusRandom(_RecentPlusArchive):

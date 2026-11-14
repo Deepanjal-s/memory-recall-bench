@@ -77,6 +77,24 @@ benchmark's token counter passed as `tokenizer_fn` so both sides agree on sizes.
 `Memory.get()` with the most recent messages and checking that their text matches; they are *not* stored in
 `additional_kwargs`, because `Memory` counts those as tokens and that would change what's being measured.
 
+## Embedding and hybrid retrieval
+
+```python
+from memory_recall_bench.embeddings import EmbeddingCache, RecentPlusEmbedding, RecentPlusHybrid, fastembed_encoder
+
+cache = EmbeddingCache(fastembed_encoder("BAAI/bge-small-en-v1.5"), max_chars=512)
+qp = "Represent this sentence for searching relevant passages: "   # bge query instruction
+results = run([lambda: RecentPlusEmbedding(cache, query_prefix=qp),
+               lambda: RecentPlusHybrid(cache, query_prefix=qp)], convs, budgets=[4000, 16000])
+cache.save("vectors.npz")   # embed once (e.g. on a GPU), reuse everywhere
+```
+
+- The encoder is any `list[str] -> (n, dim)` callable; `sentence_transformers_encoder()` is provided for GPUs.
+- `EmbeddingCache` embeds each distinct text once and is shared across budgets and adapters.
+- `RecentPlusHybrid` fuses BM25 and embedding rankings with reciprocal rank fusion (k=60).
+- Subclass `RankedRetriever` and implement `rank(query, archive)` to benchmark your own retriever with the same
+  recent-window and budget logic.
+
 ## Built-in baselines
 
 | Adapter | Behaviour |
@@ -116,7 +134,7 @@ answer-bearing turns with `has_answer`. A small synthetic dataset is built in fo
 ## Development
 
 ```bash
-pip install -e ".[dev,llamaindex]"   # drop llamaindex to skip the library-equivalence tests
+pip install -e ".[dev,llamaindex,embeddings]"   # extras are optional; their tests skip without them
 pytest
 ```
 
