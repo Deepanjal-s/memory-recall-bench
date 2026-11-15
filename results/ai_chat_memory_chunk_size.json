@@ -1,0 +1,278 @@
+{
+ "recalled": [
+  {
+   "adapter": "app keyword (BM25)",
+   "budget": 4000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 0.8666666666666667,
+   "ci_low": 0.7333333333333333,
+   "ci_high": 0.9666666666666667,
+   "mean_context_tokens": 3953.4666666666667
+  },
+  {
+   "adapter": "app keyword (BM25)",
+   "budget": 16000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 0.9666666666666667,
+   "ci_low": 0.9,
+   "ci_high": 1.0,
+   "mean_context_tokens": 15919.133333333333
+  },
+  {
+   "adapter": "hybrid, 1500-char chunks",
+   "budget": 4000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 0.8666666666666667,
+   "ci_low": 0.7333333333333333,
+   "ci_high": 0.9666666666666667,
+   "mean_context_tokens": 3955.133333333333
+  },
+  {
+   "adapter": "hybrid, 1500-char chunks",
+   "budget": 16000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 1.0,
+   "ci_low": 1.0,
+   "ci_high": 1.0,
+   "mean_context_tokens": 15945.333333333334
+  },
+  {
+   "adapter": "hybrid, 4000-char chunks",
+   "budget": 4000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 0.8333333333333334,
+   "ci_low": 0.7,
+   "ci_high": 0.9666666666666667,
+   "mean_context_tokens": 3968.733333333333
+  },
+  {
+   "adapter": "hybrid, 4000-char chunks",
+   "budget": 16000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 1.0,
+   "ci_low": 1.0,
+   "ci_high": 1.0,
+   "mean_context_tokens": 15970.966666666667
+  },
+  {
+   "adapter": "app keyword (BM25)",
+   "budget": 4000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.6,
+   "ci_low": 0.43333333333333335,
+   "ci_high": 0.7666666666666667,
+   "mean_context_tokens": 3960.9333333333334
+  },
+  {
+   "adapter": "app keyword (BM25)",
+   "budget": 16000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.8,
+   "ci_low": 0.6666666666666666,
+   "ci_high": 0.9333333333333333,
+   "mean_context_tokens": 15955.5
+  },
+  {
+   "adapter": "hybrid, 1500-char chunks",
+   "budget": 4000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.8333333333333334,
+   "ci_low": 0.7,
+   "ci_high": 0.9666666666666667,
+   "mean_context_tokens": 3957.6666666666665
+  },
+  {
+   "adapter": "hybrid, 1500-char chunks",
+   "budget": 16000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.9333333333333333,
+   "ci_low": 0.8333333333333334,
+   "ci_high": 1.0,
+   "mean_context_tokens": 15957.233333333334
+  },
+  {
+   "adapter": "hybrid, 4000-char chunks",
+   "budget": 4000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.7666666666666667,
+   "ci_low": 0.6,
+   "ci_high": 0.9,
+   "mean_context_tokens": 3963.1666666666665
+  },
+  {
+   "adapter": "hybrid, 4000-char chunks",
+   "budget": 16000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.9,
+   "ci_low": 0.8,
+   "ci_high": 1.0,
+   "mean_context_tokens": 15949.5
+  }
+ ],
+ "recalled_all": [
+  {
+   "adapter": "app keyword (BM25)",
+   "budget": 4000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 0.3,
+   "ci_low": 0.13333333333333333,
+   "ci_high": 0.4666666666666667,
+   "mean_context_tokens": 3953.4666666666667
+  },
+  {
+   "adapter": "app keyword (BM25)",
+   "budget": 16000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 0.7,
+   "ci_low": 0.5333333333333333,
+   "ci_high": 0.8666666666666667,
+   "mean_context_tokens": 15919.133333333333
+  },
+  {
+   "adapter": "hybrid, 1500-char chunks",
+   "budget": 4000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 0.4,
+   "ci_low": 0.23333333333333334,
+   "ci_high": 0.6,
+   "mean_context_tokens": 3955.133333333333
+  },
+  {
+   "adapter": "hybrid, 1500-char chunks",
+   "budget": 16000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 0.8666666666666667,
+   "ci_low": 0.7333333333333333,
+   "ci_high": 0.9666666666666667,
+   "mean_context_tokens": 15945.333333333334
+  },
+  {
+   "adapter": "hybrid, 4000-char chunks",
+   "budget": 4000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 0.3,
+   "ci_low": 0.13333333333333333,
+   "ci_high": 0.4666666666666667,
+   "mean_context_tokens": 3968.733333333333
+  },
+  {
+   "adapter": "hybrid, 4000-char chunks",
+   "budget": 16000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 0.7333333333333333,
+   "ci_low": 0.5666666666666667,
+   "ci_high": 0.9,
+   "mean_context_tokens": 15970.966666666667
+  },
+  {
+   "adapter": "app keyword (BM25)",
+   "budget": 4000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.6,
+   "ci_low": 0.43333333333333335,
+   "ci_high": 0.7666666666666667,
+   "mean_context_tokens": 3960.9333333333334
+  },
+  {
+   "adapter": "app keyword (BM25)",
+   "budget": 16000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.8,
+   "ci_low": 0.6666666666666666,
+   "ci_high": 0.9333333333333333,
+   "mean_context_tokens": 15955.5
+  },
+  {
+   "adapter": "hybrid, 1500-char chunks",
+   "budget": 4000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.8333333333333334,
+   "ci_low": 0.7,
+   "ci_high": 0.9666666666666667,
+   "mean_context_tokens": 3957.6666666666665
+  },
+  {
+   "adapter": "hybrid, 1500-char chunks",
+   "budget": 16000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.9333333333333333,
+   "ci_low": 0.8333333333333334,
+   "ci_high": 1.0,
+   "mean_context_tokens": 15957.233333333334
+  },
+  {
+   "adapter": "hybrid, 4000-char chunks",
+   "budget": 4000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.7666666666666667,
+   "ci_low": 0.6,
+   "ci_high": 0.9,
+   "mean_context_tokens": 3963.1666666666665
+  },
+  {
+   "adapter": "hybrid, 4000-char chunks",
+   "budget": 16000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.9,
+   "ci_low": 0.8,
+   "ci_high": 1.0,
+   "mean_context_tokens": 15949.5
+  }
+ ],
+ "paired_vs_bm25_4000_recalled": {
+  "fixed": 9,
+  "broken": 2
+ },
+ "paired_vs_bm25_4000_recalled_all": {
+  "fixed": 11,
+  "broken": 1
+ },
+ "paired_vs_bm25_16000_recalled": {
+  "fixed": 5,
+  "broken": 0
+ },
+ "paired_vs_bm25_16000_recalled_all": {
+  "fixed": 10,
+  "broken": 1
+ },
+ "paired_vs_h4k_4000_recalled": {
+  "fixed": 5,
+  "broken": 2
+ },
+ "paired_vs_h4k_4000_recalled_all": {
+  "fixed": 7,
+  "broken": 2
+ },
+ "paired_vs_h4k_16000_recalled": {
+  "fixed": 1,
+  "broken": 0
+ },
+ "paired_vs_h4k_16000_recalled_all": {
+  "fixed": 5,
+  "broken": 0
+ }
+}

@@ -101,3 +101,18 @@ no IDF, so it kept the answer in a 4k context far less often than plain BM25.
 
 Paired, all-evidence at 4k: **163 questions fixed, 8 broken**. Per-question results:
 [`ai_chat_memory_before_after.json`](ai_chat_memory_before_after.json).
+
+### Follow-up: embedding unit size
+
+With on-device embeddings (`bge-small-en-v1.5`) fused into the same BM25 search, the gain was smaller than this
+benchmark's message-level retriever shows. The app embedded units of up to 4,000 characters, while bge-small reads
+only ~512 tokens. Cutting units to 1,500 characters (60 questions: all 30 preference, 30 random multi-session, CPU):
+
+| 60 questions | pref 4k | multi 4k all | pref 16k | multi 16k all |
+|---|---|---|---|---|
+| app keyword (BM25) | 60% | 30% | 80% | 70% |
+| hybrid, 4,000-char units | 77% | 30% | 90% | 73% |
+| **hybrid, 1,500-char units** | **83%** | **40%** | **93%** | **87%** |
+
+Paired against 4,000-char units, all-evidence: 7 fixed / 2 broken at 4k, 5 / 0 at 16k. Small n; indicative only.
+Summary: [`ai_chat_memory_chunk_size.json`](ai_chat_memory_chunk_size.json).
