@@ -8,4 +8,4 @@ __all__ = [
     "BUILTIN", "FIFO", "FlushToArchive", "RecentPlusBM25", "RecentPlusRandom", "load_longmemeval", "synthetic",
     "BudgetExceeded", "Result", "run", "summarize", "Conversation", "MemoryAdapter", "Message", "approx_tokens",
 ]
-__version__ = "0.3.0"
+__version__ = "0.4.0"

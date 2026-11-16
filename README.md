@@ -56,6 +56,14 @@ Evidence from every answer session kept:
 mem0 and ai-chat-memory both use bge-small, and their difference is not significant at n = 60. Both clearly beat
 BM25 alone. CIs and method: [`results/`](results/README.md#real-libraries-same-60-questions).
 
+## Install
+
+Not on PyPI yet. From GitHub (Python 3.10+; extras: `llamaindex`, `embeddings`, `mem0`):
+
+```bash
+pip install "memory-recall-bench @ git+https://github.com/Deepanjal-s/memory-recall-bench"
+```
+
 ## Plug in your own memory
 
 Implement three methods. Anything with them is a `MemoryAdapter`:
@@ -85,7 +93,7 @@ ids that don't exist.
 ## Score real libraries
 
 ```bash
-pip install "memory-recall-bench[llamaindex]"
+pip install "memory-recall-bench[llamaindex] @ git+https://github.com/Deepanjal-s/memory-recall-bench"
 mrb --data longmemeval_s_cleaned.json --adapters fifo,llamaindex,recent+bm25 --by-kind
 ```
 
@@ -97,7 +105,7 @@ benchmark's token counter passed as `tokenizer_fn` so both sides agree on sizes.
 ### mem0
 
 ```bash
-pip install "memory-recall-bench[mem0]" && python -m spacy download en_core_web_sm
+pip install "memory-recall-bench[mem0] @ git+https://github.com/Deepanjal-s/memory-recall-bench" && python -m spacy download en_core_web_sm
 mrb --data longmemeval_s_cleaned.json --adapters recent+bm25,mem0 --by-kind
 ```
 
@@ -187,6 +195,9 @@ pytest
 
 ## Changelog
 
+- **0.4.0**: `mem0` adapter (mem0's own search over verbatim messages, no LLM); embedding and hybrid retrievers
+  (`[embeddings]` extra); `RankedFromFile` / `export_conversations` for systems in other languages; results for
+  real libraries on the same 60 questions.
 - **0.3.0**: `recalled_all` metric (evidence from every answer session), `--by-kind` and `--all-evidence` CLI options,
   full LongMemEval_s results in `results/`.
 - **0.2.0**: real llama_index `Memory` adapter; the `flush` baseline is now an exact port of the library's queue logic
