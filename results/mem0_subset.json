@@ -1,0 +1,518 @@
+{
+ "recalled": [
+  {
+   "adapter": "ai-chat-memory hybrid (1500)",
+   "budget": 4000,
+   "kind": "all",
+   "n": 60,
+   "recall": 0.85,
+   "ci_low": 0.75,
+   "ci_high": 0.9333333333333333,
+   "mean_context_tokens": 3956.4
+  },
+  {
+   "adapter": "ai-chat-memory hybrid (1500)",
+   "budget": 16000,
+   "kind": "all",
+   "n": 60,
+   "recall": 0.9666666666666667,
+   "ci_low": 0.9166666666666666,
+   "ci_high": 1.0,
+   "mean_context_tokens": 15951.283333333333
+  },
+  {
+   "adapter": "ai-chat-memory keyword",
+   "budget": 4000,
+   "kind": "all",
+   "n": 60,
+   "recall": 0.7333333333333333,
+   "ci_low": 0.6166666666666667,
+   "ci_high": 0.85,
+   "mean_context_tokens": 3957.2
+  },
+  {
+   "adapter": "ai-chat-memory keyword",
+   "budget": 16000,
+   "kind": "all",
+   "n": 60,
+   "recall": 0.8833333333333333,
+   "ci_low": 0.8,
+   "ci_high": 0.95,
+   "mean_context_tokens": 15937.316666666668
+  },
+  {
+   "adapter": "mem0 (verbatim, bge-small)",
+   "budget": 4000,
+   "kind": "all",
+   "n": 60,
+   "recall": 0.8333333333333334,
+   "ci_low": 0.7333333333333333,
+   "ci_high": 0.9166666666666666,
+   "mean_context_tokens": 3972.0333333333333
+  },
+  {
+   "adapter": "mem0 (verbatim, bge-small)",
+   "budget": 16000,
+   "kind": "all",
+   "n": 60,
+   "recall": 0.95,
+   "ci_low": 0.8833333333333333,
+   "ci_high": 1.0,
+   "mean_context_tokens": 15969.8
+  },
+  {
+   "adapter": "recent+bm25",
+   "budget": 4000,
+   "kind": "all",
+   "n": 60,
+   "recall": 0.6333333333333333,
+   "ci_low": 0.5,
+   "ci_high": 0.75,
+   "mean_context_tokens": 3940.3166666666666
+  },
+  {
+   "adapter": "recent+bm25",
+   "budget": 16000,
+   "kind": "all",
+   "n": 60,
+   "recall": 0.8833333333333333,
+   "ci_low": 0.8,
+   "ci_high": 0.95,
+   "mean_context_tokens": 15894.833333333334
+  },
+  {
+   "adapter": "ai-chat-memory hybrid (1500)",
+   "budget": 4000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 0.8666666666666667,
+   "ci_low": 0.7333333333333333,
+   "ci_high": 0.9666666666666667,
+   "mean_context_tokens": 3955.133333333333
+  },
+  {
+   "adapter": "ai-chat-memory hybrid (1500)",
+   "budget": 16000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 1.0,
+   "ci_low": 1.0,
+   "ci_high": 1.0,
+   "mean_context_tokens": 15945.333333333334
+  },
+  {
+   "adapter": "ai-chat-memory keyword",
+   "budget": 4000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 0.8666666666666667,
+   "ci_low": 0.7333333333333333,
+   "ci_high": 0.9666666666666667,
+   "mean_context_tokens": 3953.4666666666667
+  },
+  {
+   "adapter": "ai-chat-memory keyword",
+   "budget": 16000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 0.9666666666666667,
+   "ci_low": 0.9,
+   "ci_high": 1.0,
+   "mean_context_tokens": 15919.133333333333
+  },
+  {
+   "adapter": "mem0 (verbatim, bge-small)",
+   "budget": 4000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 0.9333333333333333,
+   "ci_low": 0.8333333333333334,
+   "ci_high": 1.0,
+   "mean_context_tokens": 3972.3333333333335
+  },
+  {
+   "adapter": "mem0 (verbatim, bge-small)",
+   "budget": 16000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 0.9666666666666667,
+   "ci_low": 0.9,
+   "ci_high": 1.0,
+   "mean_context_tokens": 15969.6
+  },
+  {
+   "adapter": "recent+bm25",
+   "budget": 4000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 0.8,
+   "ci_low": 0.6333333333333333,
+   "ci_high": 0.9333333333333333,
+   "mean_context_tokens": 3929.9333333333334
+  },
+  {
+   "adapter": "recent+bm25",
+   "budget": 16000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 1.0,
+   "ci_low": 1.0,
+   "ci_high": 1.0,
+   "mean_context_tokens": 15849.933333333332
+  },
+  {
+   "adapter": "ai-chat-memory hybrid (1500)",
+   "budget": 4000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.8333333333333334,
+   "ci_low": 0.7,
+   "ci_high": 0.9666666666666667,
+   "mean_context_tokens": 3957.6666666666665
+  },
+  {
+   "adapter": "ai-chat-memory hybrid (1500)",
+   "budget": 16000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.9333333333333333,
+   "ci_low": 0.8333333333333334,
+   "ci_high": 1.0,
+   "mean_context_tokens": 15957.233333333334
+  },
+  {
+   "adapter": "ai-chat-memory keyword",
+   "budget": 4000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.6,
+   "ci_low": 0.43333333333333335,
+   "ci_high": 0.7666666666666667,
+   "mean_context_tokens": 3960.9333333333334
+  },
+  {
+   "adapter": "ai-chat-memory keyword",
+   "budget": 16000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.8,
+   "ci_low": 0.6333333333333333,
+   "ci_high": 0.9333333333333333,
+   "mean_context_tokens": 15955.5
+  },
+  {
+   "adapter": "mem0 (verbatim, bge-small)",
+   "budget": 4000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.7333333333333333,
+   "ci_low": 0.5666666666666667,
+   "ci_high": 0.8666666666666667,
+   "mean_context_tokens": 3971.733333333333
+  },
+  {
+   "adapter": "mem0 (verbatim, bge-small)",
+   "budget": 16000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.9333333333333333,
+   "ci_low": 0.8333333333333334,
+   "ci_high": 1.0,
+   "mean_context_tokens": 15970.0
+  },
+  {
+   "adapter": "recent+bm25",
+   "budget": 4000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.4666666666666667,
+   "ci_low": 0.3,
+   "ci_high": 0.6333333333333333,
+   "mean_context_tokens": 3950.7
+  },
+  {
+   "adapter": "recent+bm25",
+   "budget": 16000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.7666666666666667,
+   "ci_low": 0.6,
+   "ci_high": 0.9,
+   "mean_context_tokens": 15939.733333333334
+  }
+ ],
+ "recalled_all": [
+  {
+   "adapter": "ai-chat-memory hybrid (1500)",
+   "budget": 4000,
+   "kind": "all",
+   "n": 60,
+   "recall": 0.6166666666666667,
+   "ci_low": 0.48333333333333334,
+   "ci_high": 0.7333333333333333,
+   "mean_context_tokens": 3956.4
+  },
+  {
+   "adapter": "ai-chat-memory hybrid (1500)",
+   "budget": 16000,
+   "kind": "all",
+   "n": 60,
+   "recall": 0.9,
+   "ci_low": 0.8166666666666667,
+   "ci_high": 0.9666666666666667,
+   "mean_context_tokens": 15951.283333333333
+  },
+  {
+   "adapter": "ai-chat-memory keyword",
+   "budget": 4000,
+   "kind": "all",
+   "n": 60,
+   "recall": 0.45,
+   "ci_low": 0.3333333333333333,
+   "ci_high": 0.5833333333333334,
+   "mean_context_tokens": 3957.2
+  },
+  {
+   "adapter": "ai-chat-memory keyword",
+   "budget": 16000,
+   "kind": "all",
+   "n": 60,
+   "recall": 0.75,
+   "ci_low": 0.6333333333333333,
+   "ci_high": 0.85,
+   "mean_context_tokens": 15937.316666666668
+  },
+  {
+   "adapter": "mem0 (verbatim, bge-small)",
+   "budget": 4000,
+   "kind": "all",
+   "n": 60,
+   "recall": 0.5666666666666667,
+   "ci_low": 0.43333333333333335,
+   "ci_high": 0.6833333333333333,
+   "mean_context_tokens": 3972.0333333333333
+  },
+  {
+   "adapter": "mem0 (verbatim, bge-small)",
+   "budget": 16000,
+   "kind": "all",
+   "n": 60,
+   "recall": 0.8666666666666667,
+   "ci_low": 0.7666666666666667,
+   "ci_high": 0.95,
+   "mean_context_tokens": 15969.8
+  },
+  {
+   "adapter": "recent+bm25",
+   "budget": 4000,
+   "kind": "all",
+   "n": 60,
+   "recall": 0.38333333333333336,
+   "ci_low": 0.26666666666666666,
+   "ci_high": 0.5166666666666667,
+   "mean_context_tokens": 3940.3166666666666
+  },
+  {
+   "adapter": "recent+bm25",
+   "budget": 16000,
+   "kind": "all",
+   "n": 60,
+   "recall": 0.7,
+   "ci_low": 0.5833333333333334,
+   "ci_high": 0.8166666666666667,
+   "mean_context_tokens": 15894.833333333334
+  },
+  {
+   "adapter": "ai-chat-memory hybrid (1500)",
+   "budget": 4000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 0.4,
+   "ci_low": 0.23333333333333334,
+   "ci_high": 0.6,
+   "mean_context_tokens": 3955.133333333333
+  },
+  {
+   "adapter": "ai-chat-memory hybrid (1500)",
+   "budget": 16000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 0.8666666666666667,
+   "ci_low": 0.7333333333333333,
+   "ci_high": 0.9666666666666667,
+   "mean_context_tokens": 15945.333333333334
+  },
+  {
+   "adapter": "ai-chat-memory keyword",
+   "budget": 4000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 0.3,
+   "ci_low": 0.13333333333333333,
+   "ci_high": 0.4666666666666667,
+   "mean_context_tokens": 3953.4666666666667
+  },
+  {
+   "adapter": "ai-chat-memory keyword",
+   "budget": 16000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 0.7,
+   "ci_low": 0.5333333333333333,
+   "ci_high": 0.8666666666666667,
+   "mean_context_tokens": 15919.133333333333
+  },
+  {
+   "adapter": "mem0 (verbatim, bge-small)",
+   "budget": 4000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 0.4,
+   "ci_low": 0.23333333333333334,
+   "ci_high": 0.5666666666666667,
+   "mean_context_tokens": 3972.3333333333335
+  },
+  {
+   "adapter": "mem0 (verbatim, bge-small)",
+   "budget": 16000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 0.8,
+   "ci_low": 0.6333333333333333,
+   "ci_high": 0.9333333333333333,
+   "mean_context_tokens": 15969.6
+  },
+  {
+   "adapter": "recent+bm25",
+   "budget": 4000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 0.3,
+   "ci_low": 0.13333333333333333,
+   "ci_high": 0.4666666666666667,
+   "mean_context_tokens": 3929.9333333333334
+  },
+  {
+   "adapter": "recent+bm25",
+   "budget": 16000,
+   "kind": "multi-session",
+   "n": 30,
+   "recall": 0.6333333333333333,
+   "ci_low": 0.4666666666666667,
+   "ci_high": 0.8,
+   "mean_context_tokens": 15849.933333333332
+  },
+  {
+   "adapter": "ai-chat-memory hybrid (1500)",
+   "budget": 4000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.8333333333333334,
+   "ci_low": 0.7,
+   "ci_high": 0.9666666666666667,
+   "mean_context_tokens": 3957.6666666666665
+  },
+  {
+   "adapter": "ai-chat-memory hybrid (1500)",
+   "budget": 16000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.9333333333333333,
+   "ci_low": 0.8333333333333334,
+   "ci_high": 1.0,
+   "mean_context_tokens": 15957.233333333334
+  },
+  {
+   "adapter": "ai-chat-memory keyword",
+   "budget": 4000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.6,
+   "ci_low": 0.43333333333333335,
+   "ci_high": 0.7666666666666667,
+   "mean_context_tokens": 3960.9333333333334
+  },
+  {
+   "adapter": "ai-chat-memory keyword",
+   "budget": 16000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.8,
+   "ci_low": 0.6333333333333333,
+   "ci_high": 0.9333333333333333,
+   "mean_context_tokens": 15955.5
+  },
+  {
+   "adapter": "mem0 (verbatim, bge-small)",
+   "budget": 4000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.7333333333333333,
+   "ci_low": 0.5666666666666667,
+   "ci_high": 0.8666666666666667,
+   "mean_context_tokens": 3971.733333333333
+  },
+  {
+   "adapter": "mem0 (verbatim, bge-small)",
+   "budget": 16000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.9333333333333333,
+   "ci_low": 0.8333333333333334,
+   "ci_high": 1.0,
+   "mean_context_tokens": 15970.0
+  },
+  {
+   "adapter": "recent+bm25",
+   "budget": 4000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.4666666666666667,
+   "ci_low": 0.3,
+   "ci_high": 0.6333333333333333,
+   "mean_context_tokens": 3950.7
+  },
+  {
+   "adapter": "recent+bm25",
+   "budget": 16000,
+   "kind": "single-session-preference",
+   "n": 30,
+   "recall": 0.7666666666666667,
+   "ci_low": 0.6,
+   "ci_high": 0.9,
+   "mean_context_tokens": 15939.733333333334
+  }
+ ],
+ "paired_vs_bm25_4000_recalled": {
+  "fixed": 13,
+  "broken": 1
+ },
+ "paired_vs_bm25_4000_recalled_all": {
+  "fixed": 12,
+  "broken": 1
+ },
+ "paired_vs_bm25_16000_recalled": {
+  "fixed": 6,
+  "broken": 2
+ },
+ "paired_vs_bm25_16000_recalled_all": {
+  "fixed": 11,
+  "broken": 1
+ },
+ "paired_vs_aimh_4000_recalled": {
+  "fixed": 3,
+  "broken": 4
+ },
+ "paired_vs_aimh_4000_recalled_all": {
+  "fixed": 4,
+  "broken": 7
+ },
+ "paired_vs_aimh_16000_recalled": {
+  "fixed": 0,
+  "broken": 1
+ },
+ "paired_vs_aimh_16000_recalled_all": {
+  "fixed": 1,
+  "broken": 3
+ }
+}

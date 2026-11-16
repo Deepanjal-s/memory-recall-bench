@@ -116,3 +116,28 @@ only ~512 tokens. Cutting units to 1,500 characters (60 questions: all 30 prefer
 
 Paired against 4,000-char units, all-evidence: 7 fixed / 2 broken at 4k, 5 / 0 at 16k. Small n; indicative only.
 Summary: [`ai_chat_memory_chunk_size.json`](ai_chat_memory_chunk_size.json).
+
+## mem0 (open-source `Memory`, retrieval only)
+
+The `mem0` adapter stores each message verbatim with `add(..., infer=False)` and ranks with mem0 2.2.1's own
+`search()`. That search is vector candidates boosted by BM25 and entity matches. The stack is on-device: fastembed
+bge-small, local Qdrant and spaCy, with no LLM. mem0's default mode (LLM fact extraction) is **not** measured here. The
+same 60 questions as above (all 30 preference, 30 random multi-session), CPU, about 64 s per question:
+
+| 60 questions | 4k any | 4k all | 16k any | 16k all |
+|---|---|---|---|---|
+| `recent+bm25` (reference) | 63% | 38% | 88% | 70% |
+| ai-chat-memory keyword (BM25) | 73% | 45% | 88% | 75% |
+| **mem0, verbatim** | **83%** | **57%** | **95%** | **87%** |
+| ai-chat-memory hybrid, 1,500-char units | 85% | 62% | 97% | 90% |
+
+- Against `recent+bm25`, all-evidence: **12 fixed / 1 broken at 4k**, 11 / 1 at 16k. The embedding step helps,
+  mostly on preference questions (4k: 47% → 73%).
+- Against ai-chat-memory's hybrid it is roughly even: 4 fixed / 7 broken at 4k, 1 / 3 at 16k, all-evidence. With
+  n = 60 the difference is not significant.
+- Design note: mem0 takes candidates from the vector search only. BM25 re-scores those candidates but cannot add a
+  message that matches only by keyword. ai-chat-memory fuses both lists (reciprocal rank fusion), so a keyword-only match
+  can still get in.
+
+Summary: [`mem0_subset.json`](mem0_subset.json). Scripts: `rank_mem0.py`, `score_mem0.py` in the lab repo
+(`kaggle/longmemeval-full`).
