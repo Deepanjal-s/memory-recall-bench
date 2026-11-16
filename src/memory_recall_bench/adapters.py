@@ -226,6 +226,11 @@ def _llamaindex():
     return LlamaIndexMemory()
 
 
+def _mem0():
+    from .integrations.mem0 import Mem0Retriever  # needs the [mem0] extra
+    return Mem0Retriever()
+
+
 BUILTIN = {
     "fifo": FIFO,
     "flush": FlushToArchive,
@@ -233,4 +238,5 @@ BUILTIN = {
     "recent+bm25": RecentPlusBM25,
     "recent+random": RecentPlusRandom,
     "llamaindex": _llamaindex,
+    "mem0": _mem0,
 }

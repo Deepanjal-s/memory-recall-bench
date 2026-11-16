@@ -77,6 +77,20 @@ benchmark's token counter passed as `tokenizer_fn` so both sides agree on sizes.
 `Memory.get()` with the most recent messages and checking that their text matches; they are *not* stored in
 `additional_kwargs`, because `Memory` counts those as tokens and that would change what's being measured.
 
+### mem0
+
+```bash
+pip install "memory-recall-bench[mem0]" && python -m spacy download en_core_web_sm
+mrb --data longmemeval_s_cleaned.json --adapters recent+bm25,mem0 --by-kind
+```
+
+`mem0` measures the open-source `mem0.Memory` **retrieval**, not its LLM fact extraction: messages are stored verbatim
+with `add(..., infer=False)` (no LLM call), and the archive is ranked by mem0's own `search()`. That is semantic
+candidates from the vector store, boosted by mem0's BM25 and entity scores. The default stack runs on-device:
+fastembed `BAAI/bge-small-en-v1.5`, local Qdrant and spaCy. Telemetry is switched off. Pass `config=` for a different
+mem0 configuration. Indexing costs about 0.2 s per message on a laptop CPU, and each conversation is indexed once
+for all budgets.
+
 ## Embedding and hybrid retrieval
 
 ```python
@@ -150,7 +164,7 @@ answer-bearing turns with `has_answer`. A small synthetic dataset is built in fo
 ## Development
 
 ```bash
-pip install -e ".[dev,llamaindex,embeddings]"   # extras are optional; their tests skip without them
+pip install -e ".[dev,llamaindex,embeddings,mem0]"   # extras are optional; their tests skip without them
 pytest
 ```
 

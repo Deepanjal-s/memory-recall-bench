@@ -37,3 +37,16 @@ jobs:
           python-version: "3.12"
       - run: pip install -e ".[dev]" numpy   # tests use a toy encoder; no model download
       - run: pytest -q tests/test_embeddings.py
+
+  mem0:
+    runs-on: ubuntu-latest
+    env:
+      MEM0_TELEMETRY: "False"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e ".[dev,mem0]"
+      - run: python -m spacy download en_core_web_sm
+      - run: pytest -q tests/test_mem0.py   # downloads bge-small and Qdrant/bm25 (fastembed)
