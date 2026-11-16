@@ -39,6 +39,23 @@ On all 479 labelled LongMemEval_s questions (~115k tokens of history each), at a
 Keyword retrieval is weakest on **preference** questions (77%) and **multi-session** questions needing several facts
 (62% all-evidence). Full tables, per-type breakdown and raw per-question results are in [`results/`](results/).
 
+### Real libraries, same questions
+
+60 questions where keyword retrieval is weakest (all 30 preference questions, 30 random multi-session questions).
+Evidence from every answer session kept:
+
+| | 4k budget | 16k budget |
+|---|---|---|
+| FIFO | 3% | 5% |
+| llama_index `Memory` (defaults, no memory blocks) | 0% | 5% |
+| `recent+random` (control) | 5% | 12% |
+| `recent+bm25` | 38% | 70% |
+| mem0 2.2 search over verbatim messages (no LLM) | 57% | 87% |
+| [ai-chat-memory](https://github.com/Deepanjal-s/ai-chat-memory) hybrid (BM25 + bge-small, RRF) | **62%** | **90%** |
+
+mem0 and ai-chat-memory both use bge-small, and their difference is not significant at n = 60. Both clearly beat
+BM25 alone. CIs and method: [`results/`](results/README.md#real-libraries-same-60-questions).
+
 ## Plug in your own memory
 
 Implement three methods. Anything with them is a `MemoryAdapter`:

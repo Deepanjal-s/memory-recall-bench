@@ -141,3 +141,22 @@ same 60 questions as above (all 30 preference, 30 random multi-session), CPU, ab
 
 Summary: [`mem0_subset.json`](mem0_subset.json). Scripts: `rank_mem0.py`, `score_mem0.py` in the lab repo
 (`kaggle/longmemeval-full`).
+
+## Real libraries, same 60 questions
+
+The same 60 questions as the mem0 section, all adapters in one run (`score_libraries.py` in the lab repo).
+Percent with 95% bootstrap CI:
+
+| | 4k any | 4k all | 16k any | 16k all |
+|---|---|---|---|---|
+| FIFO | 5 [0-12] | 3 [0-8] | 27 [17-38] | 5 [0-12] |
+| llama_index `Memory` 0.14.26 (defaults) | 0 [0-0] | 0 [0-0] | 12 [5-20] | 5 [0-12] |
+| `recent+random` (control) | 13 [5-22] | 5 [0-12] | 30 [18-42] | 12 [5-20] |
+| `recent+bm25` | 63 [50-75] | 38 [27-50] | 88 [80-95] | 70 [58-82] |
+| ai-chat-memory keyword | 73 [62-85] | 45 [33-57] | 88 [80-97] | 75 [63-85] |
+| mem0 2.2.1, verbatim | 83 [73-92] | 57 [43-68] | 95 [88-100] | 87 [78-95] |
+| ai-chat-memory hybrid | 85 [75-93] | 62 [50-73] | 97 [92-100] | 90 [82-97] |
+
+llama_index `Memory` without memory blocks keeps only recent history, and its flush archives most of it when the
+budget is small (llama_index#24117). Its retrieval features (vector memory block) need an embedding model and are
+not measured here. Summary: [`libraries_subset.json`](libraries_subset.json).

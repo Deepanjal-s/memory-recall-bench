@@ -1,0 +1,159 @@
+{
+ "n": 60,
+ "rows": {
+  "ai-chat-memory hybrid": {
+   "recalled_4000": [
+    85,
+    75,
+    93
+   ],
+   "recalled_16000": [
+    97,
+    92,
+    100
+   ],
+   "recalled_all_4000": [
+    62,
+    50,
+    73
+   ],
+   "recalled_all_16000": [
+    90,
+    82,
+    97
+   ]
+  },
+  "ai-chat-memory keyword": {
+   "recalled_4000": [
+    73,
+    62,
+    85
+   ],
+   "recalled_16000": [
+    88,
+    80,
+    97
+   ],
+   "recalled_all_4000": [
+    45,
+    33,
+    57
+   ],
+   "recalled_all_16000": [
+    75,
+    63,
+    85
+   ]
+  },
+  "fifo": {
+   "recalled_4000": [
+    5,
+    0,
+    12
+   ],
+   "recalled_16000": [
+    27,
+    17,
+    38
+   ],
+   "recalled_all_4000": [
+    3,
+    0,
+    8
+   ],
+   "recalled_all_16000": [
+    5,
+    0,
+    12
+   ]
+  },
+  "llamaindex-memory": {
+   "recalled_4000": [
+    0,
+    0,
+    0
+   ],
+   "recalled_16000": [
+    12,
+    5,
+    20
+   ],
+   "recalled_all_4000": [
+    0,
+    0,
+    0
+   ],
+   "recalled_all_16000": [
+    5,
+    0,
+    12
+   ]
+  },
+  "mem0 (verbatim)": {
+   "recalled_4000": [
+    83,
+    73,
+    92
+   ],
+   "recalled_16000": [
+    95,
+    88,
+    100
+   ],
+   "recalled_all_4000": [
+    57,
+    43,
+    68
+   ],
+   "recalled_all_16000": [
+    87,
+    78,
+    95
+   ]
+  },
+  "recent+bm25": {
+   "recalled_4000": [
+    63,
+    50,
+    75
+   ],
+   "recalled_16000": [
+    88,
+    80,
+    95
+   ],
+   "recalled_all_4000": [
+    38,
+    27,
+    50
+   ],
+   "recalled_all_16000": [
+    70,
+    58,
+    82
+   ]
+  },
+  "recent+random": {
+   "recalled_4000": [
+    13,
+    5,
+    22
+   ],
+   "recalled_16000": [
+    30,
+    18,
+    42
+   ],
+   "recalled_all_4000": [
+    5,
+    0,
+    12
+   ],
+   "recalled_all_16000": [
+    12,
+    5,
+    20
+   ]
+  }
+ }
+}
