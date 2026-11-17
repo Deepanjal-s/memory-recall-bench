@@ -160,3 +160,34 @@ Percent with 95% bootstrap CI:
 llama_index `Memory` without memory blocks keeps only recent history, and its flush archives most of it when the
 budget is small (llama_index#24117). Its retrieval features (vector memory block) need an embedding model and are
 not measured here. Summary: [`libraries_subset.json`](libraries_subset.json).
+
+## mem0 on all 479 questions
+
+The same mem0 setup as above, run on 3 private Kaggle CPU kernels (about 160 questions each). It is compared with the
+GPU run's retrievers on the same questions. Evidence from every answer session kept (95% CI for mem0):
+
+| | 4k | 16k | 64k |
+|---|---|---|---|
+| recent+bm25 | 60.8% | 82.3% | 93.7% |
+| recent+embed | 59.1% | 89.1% | 99.2% |
+| recent+hybrid (BM25 + embed, RRF) | 63.0% | 89.8% | 99.2% |
+| **mem0 2.2.1, verbatim** | 60.8% [56–65] | 89.6% [87–92] | 98.7% [98–100] |
+
+Per question, all-evidence:
+
+| mem0 vs | 4k fixed / broken | 16k fixed / broken |
+|---|---|---|
+| recent+bm25 | 44 / 44 | **42 / 7** |
+| recent+hybrid | 23 / 34 | 14 / 15 |
+
+- At 16k and above, mem0's search is as good as a BM25+embedding hybrid and clearly better than BM25 alone.
+- At 4k it is no better than BM25 on all-evidence. It trades wins and losses there, like the pure embedding
+  retriever, and is slightly behind the hybrid (23 fixed, 34 broken). The likely cause is the design noted above:
+  mem0's candidates come only from the vector search, so keyword-only matches are lost. That is consistent with
+  these numbers but not proven by them.
+- The 60-question subset suggested a larger gap to BM25 at 4k (57% vs 38%). On all 479 the gap at 4k disappears,
+  a reminder that a hand-picked hard subset overstates differences.
+- The embedding inputs differ slightly: the GPU run embedded the first 512 characters of each message, while mem0
+  embeds the whole message (bge-small truncates at 512 tokens).
+
+Summary: [`mem0_full.json`](mem0_full.json). Scripts: `kaggle/mem0-full/` in the lab repo.

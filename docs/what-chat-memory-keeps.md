@@ -64,7 +64,11 @@ extraction was not measured. One design difference shows in the code: mem0 takes
 vector search, and BM25 re-scores those candidates, so a message that matches only by keyword can't get in.
 ai-chat-memory fuses both lists. At n = 60 the two are not significantly different; both clearly beat BM25 alone.
 
-<!-- FULL-RUN: replace with the 479-question mem0 numbers when the Kaggle shards are downloaded -->
+On all 479 questions the picture is more modest. mem0's search keeps evidence from every answer session in
+**89.6%** of questions at 16k, against 82.3% for BM25 (42 fixed, 7 broken) and 89.8% for the BM25+embedding hybrid
+(14 fixed, 15 broken: a tie). At 4k it is level with BM25 (60.8%) and slightly behind the hybrid (63.0%). The
+60-question subset had suggested a big 4k gap over BM25 (57% vs 38%). The full run shows that gap was an artefact of
+choosing BM25's hardest questions, which is why a benchmark needs the full set and not only the interesting slice.
 
 ## 4. Measuring a real app found a real bug
 
