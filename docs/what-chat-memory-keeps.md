@@ -93,8 +93,9 @@ Two later findings came from the same loop:
 3. **BM25 first, then embeddings with fusion.** BM25 is strong and cheap. Embeddings fix preference questions. Fusion
    avoids most regressions once the budget is 16k or more.
 4. **The hard case is still open.** Multi-session questions at small budgets stay near 40% for every method, because
-   ranking single messages can't gather several facts into 4k tokens. Per-session summaries are the next thing to
-   test.
+   ranking single messages can't gather several facts into 4k tokens. One cheap fix was tested and failed:
+   giving each session's best message a slot first never helped and often hurt (BM25 at 16k: 3 fixed, 130
+   broken). Per-session summaries are the next thing to test.
 
 *Method notes: token counts are approximate (4 characters per token); confidence intervals are 95% bootstrap;
 "fixed/broken" counts compare the same question under two systems. Everything is reproducible from the repository.*

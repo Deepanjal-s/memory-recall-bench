@@ -191,3 +191,24 @@ Per question, all-evidence:
   embeds the whole message (bge-small truncates at 512 tokens).
 
 Summary: [`mem0_full.json`](mem0_full.json). Scripts: `kaggle/mem0-full/` in the lab repo.
+
+## Negative result: session-diverse packing
+
+Idea: multi-session questions need one message from *each* answer session, so put the best message of each session
+first and only then the rest. Tested as a re-ordering of BM25 and of mem0's rankings, on all 479 questions. Paired
+all-evidence counts (fixed / broken) against the unmodified ranking:
+
+| Diversify across | BM25 4k | BM25 16k | mem0 4k | mem0 16k |
+|---|---|---|---|---|
+| every session | 9 / 64 | 3 / 130 | 17 / 88 | 1 / 189 |
+| top 5 sessions | 9 / 52 | 0 / 4 | 21 / 75 | 0 / 2 |
+| top 3 sessions | 6 / 27 | 0 / 0 | 19 / 42 | 0 / 0 |
+| top 2 sessions | 5 / 2 | 0 / 0 | 10 / 10 | 0 / 0 |
+
+It never helps beyond noise, even on multi-session questions alone (every session, BM25 at 16k: 0 fixed, 39
+broken). With ~50 sessions per conversation, a slot for each session's best message spends the budget on weak
+matches from irrelevant sessions. A missing answer session is usually missing because its best message ranks low,
+not because another session's messages crowd it out. Ranking single messages seems to have hit its limit here.
+The next candidates change *what* is ranked: session-level summaries, or query expansion per sub-question.
+
+Summaries: `session_diverse_summary_k{all,5,3,2}.json`. Script: `kaggle/mem0-full/session_diverse.py` in the lab repo.

@@ -1,0 +1,626 @@
+{
+ "recalled|mem0|4000|all": [
+  87.3,
+  84.3,
+  90.2
+ ],
+ "recalled|mem0|16000|all": [
+  97.5,
+  96.0,
+  98.7
+ ],
+ "recalled|mem0 diverse|4000|all": [
+  75.8,
+  71.8,
+  79.5
+ ],
+ "recalled|mem0 diverse|16000|all": [
+  81.0,
+  77.7,
+  84.6
+ ],
+ "recalled|recent+bm25|4000|all": [
+  82.5,
+  78.9,
+  85.8
+ ],
+ "recalled|recent+bm25|16000|all": [
+  94.2,
+  92.1,
+  96.2
+ ],
+ "recalled|recent+bm25 diverse|4000|all": [
+  76.0,
+  72.2,
+  79.7
+ ],
+ "recalled|recent+bm25 diverse|16000|all": [
+  83.7,
+  80.4,
+  86.8
+ ],
+ "recalled|mem0|4000|knowledge-update": [
+  95.8,
+  90.3,
+  100.0
+ ],
+ "recalled|mem0|16000|knowledge-update": [
+  100.0,
+  100.0,
+  100.0
+ ],
+ "recalled|mem0 diverse|4000|knowledge-update": [
+  87.5,
+  79.2,
+  94.4
+ ],
+ "recalled|mem0 diverse|16000|knowledge-update": [
+  91.7,
+  84.7,
+  97.2
+ ],
+ "recalled|recent+bm25|4000|knowledge-update": [
+  93.1,
+  86.1,
+  98.6
+ ],
+ "recalled|recent+bm25|16000|knowledge-update": [
+  100.0,
+  100.0,
+  100.0
+ ],
+ "recalled|recent+bm25 diverse|4000|knowledge-update": [
+  90.3,
+  83.3,
+  95.8
+ ],
+ "recalled|recent+bm25 diverse|16000|knowledge-update": [
+  95.8,
+  90.3,
+  100.0
+ ],
+ "recalled|mem0|4000|multi-session": [
+  86.4,
+  80.0,
+  92.0
+ ],
+ "recalled|mem0|16000|multi-session": [
+  98.4,
+  96.0,
+  100.0
+ ],
+ "recalled|mem0 diverse|4000|multi-session": [
+  81.6,
+  74.4,
+  88.0
+ ],
+ "recalled|mem0 diverse|16000|multi-session": [
+  91.2,
+  85.6,
+  96.0
+ ],
+ "recalled|recent+bm25|4000|multi-session": [
+  77.6,
+  70.4,
+  84.0
+ ],
+ "recalled|recent+bm25|16000|multi-session": [
+  95.2,
+  91.2,
+  98.4
+ ],
+ "recalled|recent+bm25 diverse|4000|multi-session": [
+  73.6,
+  66.4,
+  80.8
+ ],
+ "recalled|recent+bm25 diverse|16000|multi-session": [
+  85.6,
+  79.2,
+  91.2
+ ],
+ "recalled|mem0|4000|single-session-assistant": [
+  94.6,
+  87.5,
+  100.0
+ ],
+ "recalled|mem0|16000|single-session-assistant": [
+  100.0,
+  100.0,
+  100.0
+ ],
+ "recalled|mem0 diverse|4000|single-session-assistant": [
+  64.3,
+  51.8,
+  76.8
+ ],
+ "recalled|mem0 diverse|16000|single-session-assistant": [
+  69.6,
+  57.1,
+  80.4
+ ],
+ "recalled|recent+bm25|4000|single-session-assistant": [
+  94.6,
+  87.5,
+  100.0
+ ],
+ "recalled|recent+bm25|16000|single-session-assistant": [
+  100.0,
+  100.0,
+  100.0
+ ],
+ "recalled|recent+bm25 diverse|4000|single-session-assistant": [
+  76.8,
+  64.3,
+  87.5
+ ],
+ "recalled|recent+bm25 diverse|16000|single-session-assistant": [
+  80.4,
+  69.6,
+  89.3
+ ],
+ "recalled|mem0|4000|single-session-preference": [
+  73.3,
+  56.7,
+  90.0
+ ],
+ "recalled|mem0|16000|single-session-preference": [
+  93.3,
+  83.3,
+  100.0
+ ],
+ "recalled|mem0 diverse|4000|single-session-preference": [
+  76.7,
+  60.0,
+  90.0
+ ],
+ "recalled|mem0 diverse|16000|single-session-preference": [
+  86.7,
+  73.3,
+  96.7
+ ],
+ "recalled|recent+bm25|4000|single-session-preference": [
+  46.7,
+  30.0,
+  63.3
+ ],
+ "recalled|recent+bm25|16000|single-session-preference": [
+  76.7,
+  60.0,
+  90.0
+ ],
+ "recalled|recent+bm25 diverse|4000|single-session-preference": [
+  43.3,
+  26.7,
+  60.0
+ ],
+ "recalled|recent+bm25 diverse|16000|single-session-preference": [
+  60.0,
+  43.3,
+  76.7
+ ],
+ "recalled|mem0|4000|single-session-user": [
+  93.8,
+  87.5,
+  98.4
+ ],
+ "recalled|mem0|16000|single-session-user": [
+  100.0,
+  100.0,
+  100.0
+ ],
+ "recalled|mem0 diverse|4000|single-session-user": [
+  67.2,
+  54.7,
+  78.1
+ ],
+ "recalled|mem0 diverse|16000|single-session-user": [
+  68.8,
+  57.8,
+  79.7
+ ],
+ "recalled|recent+bm25|4000|single-session-user": [
+  95.3,
+  90.6,
+  100.0
+ ],
+ "recalled|recent+bm25|16000|single-session-user": [
+  100.0,
+  100.0,
+  100.0
+ ],
+ "recalled|recent+bm25 diverse|4000|single-session-user": [
+  87.5,
+  78.1,
+  95.3
+ ],
+ "recalled|recent+bm25 diverse|16000|single-session-user": [
+  90.6,
+  82.8,
+  96.9
+ ],
+ "recalled|mem0|4000|temporal-reasoning": [
+  80.3,
+  72.7,
+  87.1
+ ],
+ "recalled|mem0|16000|temporal-reasoning": [
+  93.9,
+  90.2,
+  97.7
+ ],
+ "recalled|mem0 diverse|4000|temporal-reasoning": [
+  72.7,
+  65.2,
+  80.3
+ ],
+ "recalled|mem0 diverse|16000|temporal-reasoning": [
+  75.0,
+  67.4,
+  81.8
+ ],
+ "recalled|recent+bm25|4000|temporal-reasoning": [
+  78.0,
+  70.5,
+  84.8
+ ],
+ "recalled|recent+bm25|16000|temporal-reasoning": [
+  88.6,
+  83.3,
+  93.2
+ ],
+ "recalled|recent+bm25 diverse|4000|temporal-reasoning": [
+  72.0,
+  64.4,
+  79.5
+ ],
+ "recalled|recent+bm25 diverse|16000|temporal-reasoning": [
+  78.8,
+  72.0,
+  85.6
+ ],
+ "recalled_all|mem0|4000|all": [
+  60.8,
+  56.4,
+  64.9
+ ],
+ "recalled_all|mem0|16000|all": [
+  89.6,
+  86.8,
+  92.3
+ ],
+ "recalled_all|mem0 diverse|4000|all": [
+  45.9,
+  41.3,
+  50.3
+ ],
+ "recalled_all|mem0 diverse|16000|all": [
+  50.3,
+  45.9,
+  54.9
+ ],
+ "recalled_all|recent+bm25|4000|all": [
+  60.8,
+  56.4,
+  65.1
+ ],
+ "recalled_all|recent+bm25|16000|all": [
+  82.3,
+  78.7,
+  85.6
+ ],
+ "recalled_all|recent+bm25 diverse|4000|all": [
+  49.3,
+  44.7,
+  53.9
+ ],
+ "recalled_all|recent+bm25 diverse|16000|all": [
+  55.7,
+  51.4,
+  60.1
+ ],
+ "recalled_all|mem0|4000|knowledge-update": [
+  62.5,
+  51.4,
+  73.6
+ ],
+ "recalled_all|mem0|16000|knowledge-update": [
+  97.2,
+  93.1,
+  100.0
+ ],
+ "recalled_all|mem0 diverse|4000|knowledge-update": [
+  37.5,
+  26.4,
+  48.6
+ ],
+ "recalled_all|mem0 diverse|16000|knowledge-update": [
+  44.4,
+  33.3,
+  56.9
+ ],
+ "recalled_all|recent+bm25|4000|knowledge-update": [
+  75.0,
+  63.9,
+  84.7
+ ],
+ "recalled_all|recent+bm25|16000|knowledge-update": [
+  94.4,
+  88.9,
+  98.6
+ ],
+ "recalled_all|recent+bm25 diverse|4000|knowledge-update": [
+  50.0,
+  38.9,
+  61.1
+ ],
+ "recalled_all|recent+bm25 diverse|16000|knowledge-update": [
+  55.6,
+  44.4,
+  66.7
+ ],
+ "recalled_all|mem0|4000|multi-session": [
+  37.6,
+  29.6,
+  45.6
+ ],
+ "recalled_all|mem0|16000|multi-session": [
+  78.4,
+  71.2,
+  85.6
+ ],
+ "recalled_all|mem0 diverse|4000|multi-session": [
+  30.4,
+  22.4,
+  38.4
+ ],
+ "recalled_all|mem0 diverse|16000|multi-session": [
+  36.0,
+  27.2,
+  44.8
+ ],
+ "recalled_all|recent+bm25|4000|multi-session": [
+  36.0,
+  27.2,
+  44.0
+ ],
+ "recalled_all|recent+bm25|16000|multi-session": [
+  62.4,
+  53.6,
+  70.4
+ ],
+ "recalled_all|recent+bm25 diverse|4000|multi-session": [
+  23.2,
+  16.0,
+  30.4
+ ],
+ "recalled_all|recent+bm25 diverse|16000|multi-session": [
+  31.2,
+  23.2,
+  39.2
+ ],
+ "recalled_all|mem0|4000|single-session-assistant": [
+  94.6,
+  87.5,
+  100.0
+ ],
+ "recalled_all|mem0|16000|single-session-assistant": [
+  100.0,
+  100.0,
+  100.0
+ ],
+ "recalled_all|mem0 diverse|4000|single-session-assistant": [
+  64.3,
+  51.8,
+  76.8
+ ],
+ "recalled_all|mem0 diverse|16000|single-session-assistant": [
+  69.6,
+  57.1,
+  80.4
+ ],
+ "recalled_all|recent+bm25|4000|single-session-assistant": [
+  94.6,
+  87.5,
+  100.0
+ ],
+ "recalled_all|recent+bm25|16000|single-session-assistant": [
+  100.0,
+  100.0,
+  100.0
+ ],
+ "recalled_all|recent+bm25 diverse|4000|single-session-assistant": [
+  76.8,
+  64.3,
+  87.5
+ ],
+ "recalled_all|recent+bm25 diverse|16000|single-session-assistant": [
+  80.4,
+  69.6,
+  89.3
+ ],
+ "recalled_all|mem0|4000|single-session-preference": [
+  73.3,
+  56.7,
+  90.0
+ ],
+ "recalled_all|mem0|16000|single-session-preference": [
+  93.3,
+  83.3,
+  100.0
+ ],
+ "recalled_all|mem0 diverse|4000|single-session-preference": [
+  76.7,
+  60.0,
+  90.0
+ ],
+ "recalled_all|mem0 diverse|16000|single-session-preference": [
+  86.7,
+  73.3,
+  96.7
+ ],
+ "recalled_all|recent+bm25|4000|single-session-preference": [
+  46.7,
+  30.0,
+  63.3
+ ],
+ "recalled_all|recent+bm25|16000|single-session-preference": [
+  76.7,
+  60.0,
+  90.0
+ ],
+ "recalled_all|recent+bm25 diverse|4000|single-session-preference": [
+  43.3,
+  26.7,
+  60.0
+ ],
+ "recalled_all|recent+bm25 diverse|16000|single-session-preference": [
+  60.0,
+  43.3,
+  76.7
+ ],
+ "recalled_all|mem0|4000|single-session-user": [
+  93.8,
+  87.5,
+  98.4
+ ],
+ "recalled_all|mem0|16000|single-session-user": [
+  100.0,
+  100.0,
+  100.0
+ ],
+ "recalled_all|mem0 diverse|4000|single-session-user": [
+  67.2,
+  54.7,
+  78.1
+ ],
+ "recalled_all|mem0 diverse|16000|single-session-user": [
+  68.8,
+  57.8,
+  79.7
+ ],
+ "recalled_all|recent+bm25|4000|single-session-user": [
+  95.3,
+  90.6,
+  100.0
+ ],
+ "recalled_all|recent+bm25|16000|single-session-user": [
+  100.0,
+  100.0,
+  100.0
+ ],
+ "recalled_all|recent+bm25 diverse|4000|single-session-user": [
+  87.5,
+  78.1,
+  95.3
+ ],
+ "recalled_all|recent+bm25 diverse|16000|single-session-user": [
+  90.6,
+  82.8,
+  96.9
+ ],
+ "recalled_all|mem0|4000|temporal-reasoning": [
+  48.5,
+  40.2,
+  56.8
+ ],
+ "recalled_all|mem0|16000|temporal-reasoning": [
+  85.6,
+  79.5,
+  91.7
+ ],
+ "recalled_all|mem0 diverse|4000|temporal-reasoning": [
+  40.2,
+  31.8,
+  48.5
+ ],
+ "recalled_all|mem0 diverse|16000|temporal-reasoning": [
+  41.7,
+  33.3,
+  50.0
+ ],
+ "recalled_all|recent+bm25|4000|temporal-reasoning": [
+  48.5,
+  39.4,
+  56.8
+ ],
+ "recalled_all|recent+bm25|16000|temporal-reasoning": [
+  79.5,
+  72.7,
+  86.4
+ ],
+ "recalled_all|recent+bm25 diverse|4000|temporal-reasoning": [
+  44.7,
+  36.4,
+  53.0
+ ],
+ "recalled_all|recent+bm25 diverse|16000|temporal-reasoning": [
+  50.8,
+  42.4,
+  59.1
+ ],
+ "paired|recent+bm25 diverse|4000|recalled|all": [
+  7,
+  38
+ ],
+ "paired|recent+bm25 diverse|4000|recalled|multi-session": [
+  2,
+  7
+ ],
+ "paired|recent+bm25 diverse|4000|recalled_all|all": [
+  9,
+  64
+ ],
+ "paired|recent+bm25 diverse|4000|recalled_all|multi-session": [
+  1,
+  17
+ ],
+ "paired|recent+bm25 diverse|16000|recalled|all": [
+  4,
+  54
+ ],
+ "paired|recent+bm25 diverse|16000|recalled|multi-session": [
+  1,
+  13
+ ],
+ "paired|recent+bm25 diverse|16000|recalled_all|all": [
+  3,
+  130
+ ],
+ "paired|recent+bm25 diverse|16000|recalled_all|multi-session": [
+  0,
+  39
+ ],
+ "paired|mem0 diverse|4000|recalled|all": [
+  10,
+  65
+ ],
+ "paired|mem0 diverse|4000|recalled|multi-session": [
+  4,
+  10
+ ],
+ "paired|mem0 diverse|4000|recalled_all|all": [
+  17,
+  88
+ ],
+ "paired|mem0 diverse|4000|recalled_all|multi-session": [
+  3,
+  12
+ ],
+ "paired|mem0 diverse|16000|recalled|all": [
+  2,
+  81
+ ],
+ "paired|mem0 diverse|16000|recalled|multi-session": [
+  1,
+  10
+ ],
+ "paired|mem0 diverse|16000|recalled_all|all": [
+  1,
+  189
+ ],
+ "paired|mem0 diverse|16000|recalled_all|multi-session": [
+  1,
+  54
+ ]
+}
