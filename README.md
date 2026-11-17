@@ -53,8 +53,11 @@ Evidence from every answer session kept:
 | mem0 2.2 search over verbatim messages (no LLM) | 57% | 87% |
 | [ai-chat-memory](https://github.com/Deepanjal-s/ai-chat-memory) hybrid (BM25 + bge-small, RRF) | **62%** | **90%** |
 
-mem0 and ai-chat-memory both use bge-small, and their difference is not significant at n = 60. Both clearly beat
-BM25 alone. CIs and method: [`results/`](results/README.md#real-libraries-same-60-questions).
+mem0 and ai-chat-memory both use bge-small, and their difference is not significant at n = 60. This subset is
+BM25's hardest. On **all 479 questions**, mem0 keeps all evidence in 89.6% at 16k (BM25 82.3%, hybrid 89.8%) and
+60.8% at 4k (level with BM25). See [`results/`](results/README.md#mem0-on-all-479-questions).
+
+Write-up of all findings: [What does your chatbot's memory actually keep?](docs/what-chat-memory-keeps.md) CIs and method: [`results/`](results/README.md#real-libraries-same-60-questions).
 
 ## Install
 
