@@ -263,3 +263,20 @@ Neither effect clears p < 0.05, and BM25 + expansion at 16k (84.8) is still belo
 this is not a replacement for embeddings. Untested: expansion on top of the hybrid.
 
 Lab repo `kaggle/query-expansion/`: `build_kernel.py` regenerates the expansions on Kaggle, `score_expansion.py` scores them, `expansion_summary.json` holds the numbers.
+
+### Follow-up: expansion on top of the hybrid (all 479, Kaggle GPU)
+
+Same expansions, now fused with the embedding hybrid (each sub-query ranked by BM25 + bge-small RRF). Paired against
+the plain hybrid (fixed / broken, sign test):
+
+| | all-evidence 4k | all-evidence 16k | multi-session all-evidence 16k |
+|---|---|---|---|
+| recent+hybrid | 63.0 | 89.8 | |
+| + expansion, w0=1 | 59.3 (25 / 43, p≈0.04) | 91.2 (17 / 10) | 12 / 3 (p≈0.04) |
+| + expansion, w0=2 | 61.0 (22 / 32) | 91.4 (17 / 9) | 13 / 4 (p≈0.05) |
+
+The sign depends on the budget, as with BM25: at 16k the sub-queries recover the second answer session of
+multi-session questions; at 4k they spend scarce budget on extra matches. With several comparisons run, the 16k
+multi-session gain is suggestive, not proven. Practical reading: expand queries only when the budget is large
+(≥16k), or give sub-query hits a share of the budget capped per session. Results:
+`kaggle/query-expansion/hybrid_out/hybrid_expansion_results.csv` (lab repo).
