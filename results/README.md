@@ -280,3 +280,33 @@ multi-session questions; at 4k they spend scarce budget on extra matches. With s
 multi-session gain is suggestive, not proven. Practical reading: expand queries only when the budget is large
 (≥16k), or give sub-query hits a share of the budget capped per session. Results:
 `kaggle/query-expansion/hybrid_out/hybrid_expansion_results.csv` (lab repo).
+
+### Budget-aware expansion: protect the original ranking (all 479)
+
+The 4k loss comes from sub-query matches displacing the original query's best messages. Fix: let the original
+query's ranking fill the first fraction *f* of the archive budget (in tokens), then fill the rest from the fused
+(original + sub-queries) ranking. No budget threshold is needed; the protected share scales with the budget.
+
+Step 1, BM25, choosing *f* (local; paired vs recent+bm25, all-evidence):
+
+| | 4k | 16k |
+|---|---|---|
+| recent+bm25 | 60.8 | 82.3 |
+| gate (expand only at ≥16k) | 60.8 (0 / 0) | 83.9 (27 / 19) |
+| prefix f=0.25 | 59.3 (12 / 19) | 84.1 (18 / 9) |
+| **prefix f=0.5** | **61.2 (8 / 6)** | **84.3 (11 / 1, p≈0.006)** |
+| prefix f=0.75 | 61.4 (4 / 1) | 83.5 (7 / 1) |
+
+Step 2, the check: f=0.5 fixed in advance, on the embedding hybrid (Kaggle GPU; paired vs recent+hybrid):
+
+| | any 4k | any 16k | all-evidence 4k | all-evidence 16k | multi-session all-ev 16k |
+|---|---|---|---|---|---|
+| recent+hybrid | 87.3 | 97.5 | 63.0 | 89.8 | |
+| + prefix expansion f=0.5 | 87.9 (6 / 3) | 98.1 (4 / 1) | 62.2 (5 / 9, p≈0.42) | **91.6 (13 / 4, p≈0.05)** | 9 / 1 |
+
+The protected prefix keeps the 16k gain of plain expansion (91.6 vs 91.4) and removes most of the 4k loss
+(5 / 9 instead of 25 / 43). With a few variants tried on BM25 first, the hybrid run is the cleaner test, and it
+lands at p≈0.05: a consistent improvement, not a large one. Recommendation for chat-memory retrievers that can
+afford one small-LLM call per query: expand, but reserve half of the retrieval budget for the original query.
+Lab repo `kaggle/query-expansion/`: `score_budget_aware.py` (BM25), `build_hybrid_prefix_kernel.py` (hybrid),
+`score_csv.py` (paired scoring of a kernel CSV), `hybrid_prefix_out/hybrid_prefix_results.csv`.
