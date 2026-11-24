@@ -212,3 +212,34 @@ not because another session's messages crowd it out. Ranking single messages see
 The next candidates change *what* is ranked: session-level summaries, or query expansion per sub-question.
 
 Summaries: `session_diverse_summary_k{all,5,3,2}.json`. Script: `kaggle/mem0-full/session_diverse.py` in the lab repo.
+
+## Negative result: session summaries (60-question pilot)
+
+Idea: summarize each past session once (≤120 words, kept to facts) and use a ranking of the summaries to lift
+the right sessions. Summaries: `Qwen/Qwen3-4B-Instruct-2507` on a free Kaggle T4 (2,746 of 2,747 sessions; one
+failed to come back). `SessionBoost` (`memory_recall_bench.summaries`) fuses the BM25 message ranking with a BM25
+ranking of the summaries (reciprocal rank fusion). 59 questions with every session summarized:
+
+| Ranking | any 4k | any 16k | all-evidence 4k | all-evidence 16k |
+|---|---|---|---|---|
+| recent+bm25 | 62.7 | 88.1 | 37.3 | 69.5 |
+| + sessions, weight 0.5 | 57.6 | 84.7 | 28.8 | 64.4 |
+| + sessions, weight 1 | 57.6 | 81.4 | 30.5 | 64.4 |
+| + sessions, weight 2 | 59.3 | 79.7 | 30.5 | 61.0 |
+| + sessions, only re-order BM25 hits (best of 6) | 61.0 | 89.8 | 33.9 | 72.9 |
+
+The plain wrapper is worse at every weight; the best variant is within noise (±12 points at n=59). The reason is
+visible one level down. Rank of the first answer session among ~47:
+
+| Sessions ranked by | top 1 | top 5 | top 10 |
+|---|---|---|---|
+| BM25 over the summary | 59% | 71% | 76% |
+| best BM25 message in the session | 61% | 83% | 95% |
+
+Squeezing a session into 120 words drops exactly the small details these questions ask about, so the summary is a
+*worse* pointer to the session than the session's own best message. Removing the summaries' "no names, numbers…"
+boilerplate changed nothing. Not tried: embedding the summaries, longer summaries, or a bigger model; given the
+gap above, query expansion per sub-question looks like the better next step.
+
+Scripts in the lab repo: `kaggle/session-summaries/` (`gpu/build_kernel.py`, `score_sessions.py`,
+`variant_hits.py`, `diag_session_rank.py`).
