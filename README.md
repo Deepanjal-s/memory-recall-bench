@@ -137,6 +137,19 @@ cache.save("vectors.npz")   # embed once (e.g. on a GPU), reuse everywhere
 - Subclass `RankedRetriever` and implement `rank(query, archive)` to benchmark your own retriever with the same
   recent-window and budget logic.
 
+### Query expansion
+
+```python
+from memory_recall_bench.expansion import QueryExpansion, load_expansions
+
+exp = load_expansions("expansions.jsonl")   # {"question": ..., "queries": [...]} per line, made by an LLM offline
+results = run([lambda: QueryExpansion(RecentPlusHybrid(cache, query_prefix=qp), exp, protect=0.5)], convs, [4000, 16000])
+```
+
+`QueryExpansion` wraps any `RankedRetriever`: it ranks the archive for the question and for each sub-query, fuses the
+rankings (RRF), and lets the question's own ranking fill the first `protect` share of the archive budget. With
+`protect=0.5` on the hybrid: all-evidence 89.8 → 91.6 at 16k, about level at 4k (`results/README.md`).
+
 ## Benchmark a system written in another language
 
 > **Real use:** this interface found a ranking bug in a Next.js + PostgreSQL app's search and measured the fix
