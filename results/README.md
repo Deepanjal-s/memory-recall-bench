@@ -243,3 +243,23 @@ gap above, query expansion per sub-question looks like the better next step.
 
 Scripts in the lab repo: `kaggle/session-summaries/` (`gpu/build_kernel.py`, `score_sessions.py`,
 `variant_hits.py`, `diag_session_rank.py`).
+
+## Mixed result: LLM query expansion (all 479 questions)
+
+Each question rewritten into 2–4 short search queries (one per event or item it needs) by
+`Qwen/Qwen3-4B-Instruct-2507` on a free Kaggle T4. Ranking: reciprocal rank fusion of BM25 on the original question
+(weight w0) and BM25 on each sub-query. Paired against plain BM25 (fixed / broken; p = two-sided sign test):
+
+| | any 4k | any 16k | all-evidence 4k | all-evidence 16k |
+|---|---|---|---|---|
+| recent+bm25 | 82.5 | 94.2 | 60.8 | 82.3 |
+| + expansion, w0=2 | 84.1 | 95.0 | 57.6 | 84.8 |
+| paired, w0=2 | 32 / 24 | 8 / 4 | 24 / 39 (p≈0.08) | 24 / 12 (p≈0.07) |
+| multi-session only, paired | 12 / 9 | 2 / 2 | 4 / 9 | 14 / 5 (p≈0.06) |
+
+With a large budget, sub-queries help multi-session questions find their second answer session (all-evidence
+62.4 → 69.6 on multi-session at 16k). With a small budget, the extra matches crowd the window and all-evidence drops.
+Neither effect clears p < 0.05, and BM25 + expansion at 16k (84.8) is still below the embedding hybrid (89.8), so
+this is not a replacement for embeddings. Untested: expansion on top of the hybrid.
+
+Expansions: `kaggle/query-expansion/expansions.jsonl` (lab repo), scorer `score_expansion.py`.
