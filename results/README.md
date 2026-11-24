@@ -262,4 +262,4 @@ With a large budget, sub-queries help multi-session questions find their second 
 Neither effect clears p < 0.05, and BM25 + expansion at 16k (84.8) is still below the embedding hybrid (89.8), so
 this is not a replacement for embeddings. Untested: expansion on top of the hybrid.
 
-Expansions: `kaggle/query-expansion/expansions.jsonl` (lab repo), scorer `score_expansion.py`.
+Lab repo `kaggle/query-expansion/`: `build_kernel.py` regenerates the expansions on Kaggle, `score_expansion.py` scores them, `expansion_summary.json` holds the numbers.
