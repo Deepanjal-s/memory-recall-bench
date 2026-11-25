@@ -336,7 +336,8 @@ What it shows:
 - **A 27-point recall gain bought no accuracy.** Going from 4k to 16k lifts all-evidence recall from 63.0 to
   89.8. Accuracy stays flat (59.1 → 58.9; 52 fixed / 53 broken).
 - **The extra context costs the reader.** On the 302 questions where *both* the 4k and the 16k context hold
-  all the evidence, accuracy falls from 79.1 to 70.9 (prefix expansion: 81.2 → 68.5, n=298). At 16k the
+  all the evidence, accuracy falls from 79.1 to 70.9 (18 fixed / 43 broken, p≈0.002; prefix expansion:
+  81.2 → 68.5, n=298). At 16k the
   reader sees ~65 messages (median) against ~18 at 4k. The distractors cost about as much as the extra
   evidence gains.
 - **The +1.8 recall from budget-aware expansion does not show up as accuracy** at either budget (both n.s.).
