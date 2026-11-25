@@ -253,6 +253,9 @@ pytest
 
 ## Changelog
 
+- **0.5.0**: `mrb check` / `mrb export` and a GitHub Action that fail CI when retrieval recall regresses;
+  `Rerank` (second-stage re-ranking of a retriever's top N, any scorer, cross-encoder helper); `QueryExpansion`
+  with a protected prefix; results on query expansion and on answer accuracy vs recall.
 - **0.4.0**: `mem0` adapter (mem0's own search over verbatim messages, no LLM); embedding and hybrid retrievers
   (`[embeddings]` extra); `RankedFromFile` / `export_conversations` for systems in other languages; results for
   real libraries on the same 60 questions.
