@@ -196,7 +196,7 @@ mrb check --data longmemeval_s_cleaned.json --limit 60 --rankings rankings.json 
 As a GitHub Action (downloads and caches LongMemEval_s, writes the report to the job summary):
 
 ```yaml
-- uses: Deepanjal-s/memory-recall-bench@main
+- uses: Deepanjal-s/memory-recall-bench@v0.5.0
   with:
     rankings: rankings.json      # produced by your system in an earlier step
     limit: "60"
