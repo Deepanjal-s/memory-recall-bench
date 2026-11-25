@@ -338,8 +338,7 @@ What it shows:
 - **The extra context costs the reader.** On the 302 questions where *both* the 4k and the 16k context hold
   all the evidence, accuracy falls from 79.1 to 70.9 (prefix expansion: 81.2 → 68.5, n=298). At 16k the
   reader sees ~65 messages (median) against ~18 at 4k. The distractors cost about as much as the extra
-  evidence gains. Single-session questions drop most (single-session-user 89.1 → 85.9, assistant 94.6 → 91.1;
-  expansion arm 90.6 → 78.1, 98.2 → 87.5).
+  evidence gains.
 - **The +1.8 recall from budget-aware expansion does not show up as accuracy** at either budget (both n.s.).
 - Multi-session (36–39%) and temporal reasoning (40–45%) stay low even with all evidence present. For a 4B
   reader those are reasoning failures, not retrieval failures.
