@@ -310,3 +310,43 @@ lands at p≈0.05: a consistent improvement, not a large one. Recommendation for
 afford one small-LLM call per query: expand, but reserve half of the retrieval budget for the original query.
 Lab repo `kaggle/query-expansion/`: `score_budget_aware.py` (BM25), `build_hybrid_prefix_kernel.py` (hybrid),
 `score_csv.py` (paired scoring of a kernel CSV), `hybrid_prefix_out/hybrid_prefix_results.csv`.
+
+## Answer accuracy: does better recall give better answers? (all 479, Kaggle GPU)
+
+Recall only says the evidence was *in* the context. This run asks whether a reader then answers correctly.
+For each question, Qwen3-4B-Instruct-2507 (fp16, greedy, one T4) answers from the context of two retrievers
+at 4k and 16k. The same model then judges each answer with the LongMemEval judge prompts (yes/no, with the
+per-type rules). A 4B judge is not GPT-4o, so absolute numbers are rough. Reader and judge are the same for
+every arm, so the paired differences are the measurement. Identical contexts share one answer (1,714 distinct).
+
+| | recall all-ev 4k | **accuracy 4k** | recall all-ev 16k | **accuracy 16k** |
+|---|---|---|---|---|
+| recent+hybrid | 63.0 | 59.1 | 89.8 | 58.9 |
+| + prefix expansion f=0.5 | 62.2 | 60.8 (21 / 13, p≈0.23) | 91.6 | 58.7 (24 / 25, p=1.0) |
+
+Accuracy split by whether all evidence was in the context:
+
+| | 4k, all evidence | 4k, missing some | 16k, all evidence | 16k, missing some |
+|---|---|---|---|---|
+| recent+hybrid | 79.1 | 24.9 | 63.5 | 18.4 |
+| + prefix expansion | 81.2 | 27.1 | 62.4 | 17.5 |
+
+What it shows:
+
+- **A 27-point recall gain bought no accuracy.** Going from 4k to 16k lifts all-evidence recall from 63.0 to
+  89.8. Accuracy stays flat (59.1 → 58.9; 52 fixed / 53 broken).
+- **The extra context costs the reader.** On the 302 questions where *both* the 4k and the 16k context hold
+  all the evidence, accuracy falls from 79.1 to 70.9 (prefix expansion: 81.2 → 68.5, n=298). At 16k the
+  reader sees ~65 messages (median) against ~18 at 4k. The distractors cost about as much as the extra
+  evidence gains. Single-session questions drop most (single-session-user 89.1 → 85.9, assistant 94.6 → 91.1;
+  expansion arm 90.6 → 78.1, 98.2 → 87.5).
+- **The +1.8 recall from budget-aware expansion does not show up as accuracy** at either budget (both n.s.).
+- Multi-session (36–39%) and temporal reasoning (40–45%) stay low even with all evidence present. For a 4B
+  reader those are reasoning failures, not retrieval failures.
+
+Consequence for this benchmark: recall@budget is necessary but not sufficient. A retriever comparison should
+report recall at the budget the reader actually works well at. For a small reader, 4k with a precise ranker
+beats 16k with a recall-maximising one. Next candidates are precision at small budgets (a re-ranker on the
+top candidates), or the same run with a stronger reader to see whether the 16k penalty is a small-model
+effect. Lab repo `kaggle/answer-accuracy/`: `build_kernel.py` (kernel `lme-answer-accuracy`, private),
+`score_answers.py`, `answer_accuracy_summary.json`.
