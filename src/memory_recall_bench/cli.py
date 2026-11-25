@@ -18,7 +18,15 @@ def _budgets(text: str) -> list[int]:
 
 
 def main(argv: list[str] | None = None) -> int:
-    p = argparse.ArgumentParser(prog="mrb", description="Measure whether chat memory keeps the facts it will need.")
+    argv = sys.argv[1:] if argv is None else argv
+    if argv[:1] == ["check"]:
+        from .check import check_main
+        return check_main(argv[1:])
+    if argv[:1] == ["export"]:
+        from .check import export_main
+        return export_main(argv[1:])
+    p = argparse.ArgumentParser(epilog="Subcommands: 'mrb check --help' (CI regression check), 'mrb export --help'.",
+                                prog="mrb", description="Measure whether chat memory keeps the facts it will need.")
     p.add_argument("--data", help="LongMemEval JSON file. Omit to use the built-in synthetic set.")
     p.add_argument("--limit", type=int, help="Use only the first N conversations.")
     p.add_argument("--budgets", default="2k,8k,32k", help="Comma-separated, e.g. 2k,8k,32000")

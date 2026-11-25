@@ -1,0 +1,70 @@
+name: memory-recall-check
+description: Fail the build when a chat-memory / RAG retriever starts losing the facts its model needs (LongMemEval recall at a token budget).
+branding:
+  icon: check-circle
+  color: blue
+inputs:
+  rankings:
+    description: Path to your system's rankings JSON ({conversation id -> [message ids, best first]}), made from `mrb export` output.
+    required: true
+  data:
+    description: Path to a LongMemEval JSON file. Leave empty to download longmemeval_s (cached between runs).
+    default: ""
+  limit:
+    description: Use only the first N questions (must match the conversations you ranked).
+    default: ""
+  budget:
+    description: Context budget in tokens, e.g. 4k or 16000.
+    default: 4k
+  all-evidence:
+    description: "true = count a hit only when evidence from every answer session is in context."
+    default: "false"
+  min-recall:
+    description: Fail below this recall (0-1). Empty = no floor.
+    default: ""
+  baseline:
+    description: Baseline JSON from an earlier `mrb check --write-baseline` (commit it to your repo).
+    default: ""
+  max-drop:
+    description: Allowed drop below the baseline (0-1).
+    default: "0"
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v6
+      with:
+        python-version: "3.12"
+    - name: Install memory-recall-bench
+      shell: bash
+      run: pip install --quiet "${{ github.action_path }}"
+    - name: Cache LongMemEval
+      if: inputs.data == ''
+      uses: actions/cache@v6
+      with:
+        path: ${{ runner.temp }}/longmemeval_s_cleaned.json
+        key: longmemeval-s-cleaned-v1
+    - name: Download LongMemEval
+      if: inputs.data == ''
+      shell: bash
+      run: |
+        f="${{ runner.temp }}/longmemeval_s_cleaned.json"
+        [ -s "$f" ] || curl -sSfL -o "$f" https://huggingface.co/datasets/xiaowu0162/longmemeval-cleaned/resolve/main/longmemeval_s_cleaned.json
+    - name: Check retrieval
+      shell: bash
+      env:
+        DATA: ${{ inputs.data }}
+        RANKINGS: ${{ inputs.rankings }}
+        LIMIT: ${{ inputs.limit }}
+        BUDGET: ${{ inputs.budget }}
+        ALL_EV: ${{ inputs.all-evidence }}
+        MIN_RECALL: ${{ inputs.min-recall }}
+        BASELINE: ${{ inputs.baseline }}
+        MAX_DROP: ${{ inputs.max-drop }}
+      run: |
+        args=(check --rankings "$RANKINGS" --budget "$BUDGET" --max-drop "$MAX_DROP")
+        args+=(--data "${DATA:-${{ runner.temp }}/longmemeval_s_cleaned.json}")
+        [ -n "$LIMIT" ] && args+=(--limit "$LIMIT")
+        [ "$ALL_EV" = "true" ] && args+=(--all-evidence)
+        [ -n "$MIN_RECALL" ] && args+=(--min-recall "$MIN_RECALL")
+        [ -n "$BASELINE" ] && args+=(--baseline "$BASELINE")
+        mrb "${args[@]}"

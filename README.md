@@ -180,6 +180,34 @@ run([lambda: RankedFromFile("rankings.json", convs, name="my-app")], convs, budg
 The rankings go through the same recent-window, pairing and budget rules as the built-in retrievers, so the
 comparison is like-for-like. A missing conversation raises an error rather than silently scoring zero.
 
+## Catch retrieval regressions in CI
+
+A change to chunking, embeddings or ranking can silently drop facts your assistant needs. `mrb check` replays
+your system's rankings through the same budget rules and fails when recall falls below a floor or below a
+stored baseline. It names the questions that broke, so a red build says *which* facts the change lost.
+
+```bash
+mrb export --data longmemeval_s_cleaned.json --limit 60 --out convs.jsonl   # conversations for your system
+# your system: rank each conversation's messages for its question -> rankings.json
+mrb check --data longmemeval_s_cleaned.json --limit 60 --rankings rankings.json --budget 4k           --write-baseline retrieval-baseline.json                         # once; commit the file
+mrb check --data longmemeval_s_cleaned.json --limit 60 --rankings rankings.json --budget 4k           --baseline retrieval-baseline.json --max-drop 0.02 --min-recall 0.8
+```
+
+As a GitHub Action (downloads and caches LongMemEval_s, writes the report to the job summary):
+
+```yaml
+- uses: Deepanjal-s/memory-recall-bench@main
+  with:
+    rankings: rankings.json      # produced by your system in an earlier step
+    limit: "60"
+    budget: 4k
+    baseline: retrieval-baseline.json
+    max-drop: "0.02"
+```
+
+`scripts/bm25_rankings.py` is a 20-line example of the "your system" step; this repository's CI runs the
+Action end to end with it.
+
 ## Built-in baselines
 
 | Adapter | Behaviour |
