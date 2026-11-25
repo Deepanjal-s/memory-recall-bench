@@ -150,6 +150,20 @@ results = run([lambda: QueryExpansion(RecentPlusHybrid(cache, query_prefix=qp), 
 rankings (RRF), and lets the question's own ranking fill the first `protect` share of the archive budget. With
 `protect=0.5` on the hybrid: all-evidence 89.8 → 91.6 at 16k, about level at 4k (`results/README.md`).
 
+### Second-stage re-ranking
+
+```python
+from memory_recall_bench.rerank import Rerank, cross_encoder_scorer
+
+score = cross_encoder_scorer("BAAI/bge-reranker-v2-m3", device="cuda")   # or any score(query, texts) -> floats
+cache = {}                                                               # shared, so each pair is scored once
+results = run([lambda: Rerank(RecentPlusHybrid(emb, query_prefix=qp), score, top_n=100, cache=cache)],
+              convs, [4000, 16000])
+```
+
+`Rerank` wraps any `RankedRetriever` and re-scores only its first `top_n` archive messages; the rest keep the
+first-stage order. `fuse=True` blends the two orders with RRF instead of trusting the scorer alone.
+
 ## Benchmark a system written in another language
 
 > **Real use:** this interface found a ranking bug in a Next.js + PostgreSQL app's search and measured the fix
