@@ -22,10 +22,14 @@ def main(argv: list[str] | None = None) -> int:
     if argv[:1] == ["check"]:
         from .check import check_main
         return check_main(argv[1:])
+    if argv[:1] == ["report"]:
+        from .report import report_main
+        return report_main(argv[1:])
     if argv[:1] == ["export"]:
         from .check import export_main
         return export_main(argv[1:])
-    p = argparse.ArgumentParser(epilog="Subcommands: 'mrb check --help' (CI regression check), 'mrb export --help'.",
+    p = argparse.ArgumentParser(epilog="Subcommands: 'mrb check --help' (CI regression check), "
+                                       "'mrb report --help' (HTML audit), 'mrb export --help'.",
                                 prog="mrb", description="Measure whether chat memory keeps the facts it will need.")
     p.add_argument("--data", help="LongMemEval JSON file. Omit to use the built-in synthetic set.")
     p.add_argument("--limit", type=int, help="Use only the first N conversations.")

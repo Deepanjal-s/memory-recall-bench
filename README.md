@@ -168,6 +168,19 @@ first-stage order. `fuse=True` blends the two orders with RRF instead of trustin
 > hybrid's top 100, all-evidence recall at 4k goes from 63.0% to 71.4%, and judged answer accuracy peaks at
 > 64.9% with an 8k context (vs 59.1% for the hybrid at 4k). Plain replacement beats `fuse=True`.
 
+## Audit report: why does retrieval miss?
+
+```bash
+mrb report --data longmemeval_s.json --rankings rankings.json --name "our search" --out report.html
+```
+
+One self-contained HTML page: recall at each budget, recall per question type, and every question that misses
+evidence at the focus budget (`--focus 4k`), labelled with the cause found in *your* ranking:
+**never retrieved** (no needed session anywhere in the ranking: a first-stage recall problem), **ranked too
+low** (found, but below what fits: a precision problem), and **incomplete** (some needed sessions in, others
+out). Fixes are suggested in order of the measured split. On ai-chat-memory's BM25 search, 153 of 188 misses
+at 4k were "ranked too low", which is what pointed to a re-ranker.
+
 ## Benchmark a system written in another language
 
 > **Real use:** this interface found a ranking bug in a Next.js + PostgreSQL app's search and measured the fix
@@ -257,6 +270,8 @@ pytest
 
 ## Changelog
 
+- **Unreleased**: `mrb report`: one-page HTML retrieval audit (recall by budget and question type, every miss
+  labelled never retrieved / ranked too low / incomplete, fixes ranked by the measured split).
 - **0.5.0**: `mrb check` / `mrb export` and a GitHub Action that fail CI when retrieval recall regresses;
   `Rerank` (second-stage re-ranking of a retriever's top N, any scorer, cross-encoder helper); `QueryExpansion`
   with a protected prefix; results on query expansion and on answer accuracy vs recall.
