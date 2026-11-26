@@ -181,8 +181,12 @@ they are long and on-topic. Adding a constant to user turns (unless the question
 
 On the held-out half alone: 72.8 → 75.7 at 4k (9 / 2, p=0.07). A small, budget-specific gain. It partly reflects how
 LongMemEval labels evidence (on user turns by construction), so treat it as a hint for apps whose questions are about
-the user, not a general rule. The gap to the 83.9 ceiling remains open. Lab repo `kaggle/rerank-topn/`
-(`build_context_kernel.py`, `score_context.py`, `role_prior.py`, summaries). Lab repo `kaggle/rerank-topn/` (`build_models_kernel.py`, `score_models.py`, `oracle.py`, summaries). The app keeps N=30 as the default; `RERANK_TOP_N=50` is a cheap
+the user, not a general rule. The gap to the 83.9 ceiling remains open, and it is concentrated: of the 64
+questions between re-ranking and the perfect re-ranker at 4k, 27 are temporal-reasoning and 22 multi-session (both
+need two or more sessions). Capping each session at K messages after re-ranking, to make room for a second session,
+does **not** close it: on plain re-ranking the tuning half picks no cap (K=1 drops 68.3 to 57.1); on the user prior
+K=2 costs 5 points at 8k and 16k (3 / 28, p<0.001). This matches the earlier session-diverse packing result. Lab repo
+`kaggle/rerank-topn/` (`build_context_kernel.py`, `score_context.py`, `role_prior.py`, `session_cap.py`, summaries). Lab repo `kaggle/rerank-topn/` (`build_models_kernel.py`, `score_models.py`, `oracle.py`, summaries). The app keeps N=30 as the default; `RERANK_TOP_N=50` is a cheap
 +1 point. Lab repo `kaggle/rerank-topn/` (kernel builder, scorer, `topn_summary.json`).
 
 ### Follow-up: embedding unit size
