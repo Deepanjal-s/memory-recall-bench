@@ -164,6 +164,10 @@ results = run([lambda: Rerank(RecentPlusHybrid(emb, query_prefix=qp), score, top
 `Rerank` wraps any `RankedRetriever` and re-scores only its first `top_n` archive messages; the rest keep the
 first-stage order. `fuse=True` blends the two orders with RRF instead of trusting the scorer alone.
 
+> **Measured** (all 479, [results](results/#re-ranking-precision-at-small-budgets-all-479-kaggle-gpu)): on the
+> hybrid's top 100, all-evidence recall at 4k goes from 63.0% to 71.4%, and judged answer accuracy peaks at
+> 64.9% with an 8k context (vs 59.1% for the hybrid at 4k). Plain replacement beats `fuse=True`.
+
 ## Benchmark a system written in another language
 
 > **Real use:** this interface found a ranking bug in a Next.js + PostgreSQL app's search and measured the fix
