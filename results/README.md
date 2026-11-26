@@ -140,8 +140,28 @@ sessions that are in the ranking at all (N=30, 4k), 116 (67%) were already among
 re-ranker didn't score them high enough. Fusing the two orders doesn't help either: RRF
 (k=60) of the BM25 order and the re-ranker order *lowers* all-evidence recall at 4k to 66.2 (N=30; 7 fixed / 28
 broken vs plain re-ranking, p=0.0005), and N=50 or 100 doesn't rescue it (66.4). BM25's order is mostly what the
-re-ranker is correcting, so mixing it back in undoes the fix. The next gain has to come from a better scorer (the
-GPU-sized `bge-reranker-v2-m3` reaches 71.4 at N=100 from a stronger base), not from more depth or fusion. The app keeps N=30 as the default; `RERANK_TOP_N=50` is a cheap
+re-ranker is correcting, so mixing it back in undoes the fix.
+
+**Which model.** A bigger re-ranker doesn't help either. Same top 30, six public cross-encoders, all with ONNX
+ports the app could load (all-evidence recall; fixed / broken vs MiniLM-L-6 at 4k):
+
+| model | params | 2k | 4k | 8k | 16k | vs L-6 at 4k | GPU time vs L-6 |
+|---|---|---|---|---|---|---|---|
+| `ms-marco-MiniLM-L-6-v2` (app default) | 23M | 43.4 | **70.6** | 84.1 | 89.1 | | 1x |
+| `ms-marco-MiniLM-L-12-v2` | 33M | 42.2 | 69.5 | 83.5 | 89.4 | 7 / 12 | 2.0x |
+| `mxbai-rerank-xsmall-v1` | 71M | 44.3 | 67.4 | 83.5 | 88.9 | 19 / 34 (p=0.05) | 1.7x |
+| `mxbai-rerank-base-v1` | 184M | 42.6 | 68.1 | 83.5 | 88.9 | 33 / 45 | 3.4x |
+| `bge-reranker-base` | 278M | 42.6 | 69.5 | **84.8** | 88.7 | 20 / 25 | 5.3x |
+| `bge-reranker-v2-m3` (fp16) | 568M | 43.8 | **70.6** | 83.7 | 88.9 | 18 / 18 | 3.7x |
+| *perfect re-ranker (evidence first)* | | *58.5* | *83.9* | *87.1* | *89.1* | | |
+
+The headroom is real: a perfect re-ranker over the same 30 candidates would reach 83.9 at 4k, and every model
+stops near 70 regardless of size. The models disagree on *which* questions they fix (bge-v2-m3: 18 / 18 against
+L-6), so this looks like a ceiling of query-to-single-message relevance scoring, not of model capacity. A typical
+miss: "Where did I complete my Bachelor's degree in Computer Science?", where the evidence is a message that starts
+by weighing the cost of a graduate program and mentions the old degree only in passing. Closing the gap likely needs context the message alone doesn't carry (its session, neighbouring
+turns), not a bigger generic re-ranker. For the app, the 23M default stays: nothing larger is better, and it is the
+fastest. Lab repo `kaggle/rerank-topn/` (`build_models_kernel.py`, `score_models.py`, `oracle.py`, summaries). The app keeps N=30 as the default; `RERANK_TOP_N=50` is a cheap
 +1 point. Lab repo `kaggle/rerank-topn/` (kernel builder, scorer, `topn_summary.json`).
 
 ### Follow-up: embedding unit size
