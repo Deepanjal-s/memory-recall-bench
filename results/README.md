@@ -102,6 +102,24 @@ no IDF, so it kept the answer in a 4k context far less often than plain BM25.
 Paired, all-evidence at 4k: **163 questions fixed, 8 broken**. Per-question results:
 [`ai_chat_memory_before_after.json`](ai_chat_memory_before_after.json).
 
+### Follow-up: an on-device re-ranker in the same app (all 479)
+
+`mrb report` on the app's BM25 search showed that 153 of its 188 misses at 4k were *ranked too low* (evidence
+found but cut by the budget), not *never retrieved*. So the next fix was precision: a small cross-encoder
+(`Xenova/ms-marco-MiniLM-L-6-v2`, ~23 MB, ONNX on CPU via transformers.js) re-orders the top 30 hits inside the
+app's own `search()` (`RERANKER=local`).
+
+| | any evidence, 4k | all evidence, 2k | all evidence, 4k | all evidence, 8k | all evidence, 16k |
+|---|---|---|---|---|---|
+| BM25 (before) | 84.6 | 39.0 | 60.8 | 74.3 | 85.6 |
+| + re-ranker | **91.0** | **43.4** | **70.1** | **83.7** | **88.9** |
+| fixed / broken | 38 / 7 | 35 / 14 | 55 / 10 | 52 / 7 | 18 / 2 |
+
+All differences in the all-evidence row are significant (sign test, p < 0.005). This is about the same gain as the
+much larger `bge-reranker-v2-m3` on a GPU (63.0 → 71.4 at 4k, below), from a model that runs on a laptop. The cost
+is latency: a median 3.3 s per search on a laptop CPU, so the app ships it switched off. Lab repo
+`kaggle/longmemeval-full/score_rerank.py`, `aim_rerank_summary.json`.
+
 ### Follow-up: embedding unit size
 
 With on-device embeddings (`bge-small-en-v1.5`) fused into the same BM25 search, the gain was smaller than this
