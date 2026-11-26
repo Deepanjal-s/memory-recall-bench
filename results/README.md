@@ -344,6 +344,10 @@ What it shows:
 - Multi-session (36–39%) and temporal reasoning (40–45%) stay low even with all evidence present. For a 4B
   reader those are reasoning failures, not retrieval failures.
 
+Related work: Du et al., "Context Length Alone Hurts LLM Performance Despite Perfect Retrieval" (Findings of
+EMNLP 2025) report the same effect on other tasks. This run replicates it for long-term chat memory, on all 479
+LongMemEval_s evidence questions with paired tests.
+
 Consequence for this benchmark: recall@budget is necessary but not sufficient. A retriever comparison should
 report recall at the budget the reader actually works well at. For a small reader, 4k with a precise ranker
 beats 16k with a recall-maximising one. Next candidates are precision at small budgets (a re-ranker on the
