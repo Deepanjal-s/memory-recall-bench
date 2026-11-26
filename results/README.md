@@ -393,3 +393,27 @@ Consequence: for chat memory with a small reader, spend compute on a re-ranker o
 and give the reader a mid-sized context (8k here), rather than widening the context. Lab repo
 `kaggle/reranker/`: `build_kernel.py` (kernel `lme-reranker`, private), `score_recall.py`,
 `score_answers.py`, `recall_summary.json`, `answer_accuracy_summary.json`.
+
+## Inconclusive: a "stronger" reader (Qwen3-8B, 4-bit) and a judge audit
+
+To test whether the 16k accuracy penalty is a small-model effect, the same recent+hybrid contexts (4k and
+16k, identical to the answer-accuracy run) were answered by Qwen3-8B in NF4 4-bit (thinking off) and
+judged by the same Qwen3-4B judge.
+
+- **At 4k the 8B reader is worse, not better:** 54.1% vs 59.1% for Qwen3-4B-Instruct-2507 (31 fixed / 55
+  broken, p≈0.013). It does not refuse more often (it refuses somewhat less), but multi-session drops
+  from 36.0 to 24.8. So this model can't answer the question it was meant to answer. A newer, larger reader
+  in 16-bit (which needs more than a free T4) is the real test.
+- **The 16k half failed:** every 16k prompt ran out of GPU memory on the T4 and was recorded as `[OOM]`.
+  Those rows are excluded; no 16k number is reported for the 8B.
+
+**Judge audit (prompted by the failed run).** The judge answered "yes" to 204 of the 479 literal `[OOM]`
+responses (109 of 132 temporal-reasoning questions), so a junk response string can fool it. To check that
+this doesn't affect the real results, I hand-graded a random sample of 50 judged answers from the 4B run
+(recent+hybrid at 4k, preference questions excluded) against the gold answers. I agreed with the judge on
+47–48 of 50 (about 95%): one off-by-one day count wrongly marked wrong, one partial job title wrongly
+marked right, one borderline case. On real refusals ("not mentioned"), the judge says yes about 10% of the
+time, mostly where the refusal still contains part of the answer. The published accuracy numbers stand
+with roughly ±2–3 points of judge noise. Paired comparisons are less affected, because both arms share it.
+Future kernels drop non-answers like `[OOM]` before judging. Lab repo `kaggle/stronger-reader/`:
+`build_kernel.py` (kernel `lme-stronger-reader`, private), `score_compare.py`.
