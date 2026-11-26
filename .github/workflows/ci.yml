@@ -75,3 +75,4 @@ jobs:
           limit: "30"
           budget: 4k
           min-recall: "0.5"
+          report: "true"

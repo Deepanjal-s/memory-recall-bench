@@ -28,6 +28,9 @@ inputs:
   max-drop:
     description: Allowed drop below the baseline (0-1).
     default: "0"
+  report:
+    description: '"true" = also write an HTML retrieval audit (why each question misses) and upload it as the build artifact "retrieval-report".'
+    default: "false"
 runs:
   using: composite
   steps:
@@ -49,6 +52,25 @@ runs:
       run: |
         f="${{ runner.temp }}/longmemeval_s_cleaned.json"
         [ -s "$f" ] || curl -sSfL -o "$f" https://huggingface.co/datasets/xiaowu0162/longmemeval-cleaned/resolve/main/longmemeval_s_cleaned.json
+    - name: Retrieval audit report
+      if: inputs.report == 'true'
+      shell: bash
+      env:
+        DATA: ${{ inputs.data }}
+        RANKINGS: ${{ inputs.rankings }}
+        LIMIT: ${{ inputs.limit }}
+        BUDGET: ${{ inputs.budget }}
+      run: |
+        args=(report --rankings "$RANKINGS" --focus "$BUDGET" --out "${{ runner.temp }}/retrieval-report.html")
+        args+=(--data "${DATA:-${{ runner.temp }}/longmemeval_s_cleaned.json}")
+        [ -n "$LIMIT" ] && args+=(--limit "$LIMIT")
+        mrb "${args[@]}"
+    - name: Upload report
+      if: inputs.report == 'true'
+      uses: actions/upload-artifact@v4
+      with:
+        name: retrieval-report
+        path: ${{ runner.temp }}/retrieval-report.html
     - name: Check retrieval
       shell: bash
       env:
