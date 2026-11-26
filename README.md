@@ -213,13 +213,14 @@ mrb check --data longmemeval_s_cleaned.json --limit 60 --rankings rankings.json 
 As a GitHub Action (downloads and caches LongMemEval_s, writes the report to the job summary):
 
 ```yaml
-- uses: Deepanjal-s/memory-recall-bench@v0.5.0
+- uses: Deepanjal-s/memory-recall-bench@v0.6.0
   with:
     rankings: rankings.json      # produced by your system in an earlier step
     limit: "60"
     budget: 4k
     baseline: retrieval-baseline.json
     max-drop: "0.02"
+    report: "true"               # optional: HTML audit of every miss, uploaded as an artifact
 ```
 
 `scripts/bm25_rankings.py` is a 20-line example of the "your system" step; this repository's CI runs the
@@ -270,8 +271,9 @@ pytest
 
 ## Changelog
 
-- **Unreleased**: `mrb report`: one-page HTML retrieval audit (recall by budget and question type, every miss
-  labelled never retrieved / ranked too low / incomplete, fixes ranked by the measured split).
+- **0.6.0**: `mrb report`: one-page HTML retrieval audit (recall by budget and question type, every miss
+  labelled never retrieved / ranked too low / incomplete, fixes ranked by the measured split); the Action
+  uploads it as an artifact with `report: "true"`.
 - **0.5.0**: `mrb check` / `mrb export` and a GitHub Action that fail CI when retrieval recall regresses;
   `Rerank` (second-stage re-ranking of a retriever's top N, any scorer, cross-encoder helper); `QueryExpansion`
   with a protected prefix; results on query expansion and on answer accuracy vs recall.
