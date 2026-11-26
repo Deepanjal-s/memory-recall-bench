@@ -350,3 +350,46 @@ beats 16k with a recall-maximising one. Next candidates are precision at small b
 top candidates), or the same run with a stronger reader to see whether the 16k penalty is a small-model
 effect. Lab repo `kaggle/answer-accuracy/`: `build_kernel.py` (kernel `lme-answer-accuracy`, private),
 `score_answers.py`, `answer_accuracy_summary.json`.
+
+## Re-ranking: precision at small budgets (all 479, Kaggle GPU)
+
+A cross-encoder (`BAAI/bge-reranker-v2-m3`) re-scores the hybrid's top 100 messages for each question,
+then the usual budget packing runs on the new order (`Rerank(..., top_n=100)`). The "rrf" arm fuses the
+re-ranker order with the hybrid order instead of replacing it. Same Qwen3-4B reader and judge as above.
+
+All-evidence recall, paired against recent+hybrid (fixed / broken, sign test):
+
+| budget | recent+hybrid | + rerank | fixed / broken | + rerank rrf | fixed / broken |
+|---|---|---|---|---|---|
+| 2k | 36.5 | **44.3** | 50 / 13, p<0.001 | 40.9 | 32 / 11, p=0.002 |
+| 4k | 63.0 | **71.4** | 58 / 18, p<0.001 | 70.1 | 44 / 10, p<0.001 |
+| 8k | 79.5 | **85.8** | 43 / 13, p<0.001 | 83.3 | 23 / 5, p=0.001 |
+| 16k | 89.8 | **92.5** | 23 / 10, p=0.035 | 91.4 | 15 / 7, p=0.13 |
+
+Answer accuracy (judged):
+
+| | 4k | 8k | 16k |
+|---|---|---|---|
+| recent+hybrid | 59.1 | 61.8 | 58.9 |
+| + rerank | 62.2 (45 / 30, p=0.11) | **64.9** (39 / 24, p=0.08) | |
+| + rerank rrf | 62.8 (38 / 20, p=0.025) | 62.4 | |
+
+What it shows:
+
+- **Re-ranking is the first change that moves recall a lot at small budgets.** +7.8 points at 2k and +8.4
+  at 4k; multi-session all-evidence at 4k goes from 36.0 to 46.4. Plain replacement beats RRF fusion at
+  every budget: the cross-encoder's order is better than the hybrid's, so mixing the hybrid back in dilutes it.
+- **This time some of the recall turns into accuracy.** Re-ranked 8k (64.9) is the best configuration in
+  this benchmark so far: better than the old best, recent+hybrid at 4k (63 fixed / 35 broken, p≈0.006),
+  and better than recent+hybrid at 16k (59 / 30, p≈0.003). Single-budget gains over the hybrid are
+  +3 points and borderline (p 0.03–0.11).
+- **The distractor penalty is still there.** Accuracy when all evidence is present falls from 76.9 at 4k
+  to 71.8 at 8k for the re-ranked contexts. Re-ranking wins by putting the evidence into fewer tokens, not
+  by making the reader immune to noise.
+- Cost: one cross-encoder pass over 100 messages per question: 47,900 pairs in 705 s on one T4, about
+  1.5 s per question (fp16, max length 512).
+
+Consequence: for chat memory with a small reader, spend compute on a re-ranker over a wide candidate set
+and give the reader a mid-sized context (8k here), rather than widening the context. Lab repo
+`kaggle/reranker/`: `build_kernel.py` (kernel `lme-reranker`, private), `score_recall.py`,
+`score_answers.py`, `recall_summary.json`, `answer_accuracy_summary.json`.
