@@ -161,7 +161,28 @@ L-6), so this looks like a ceiling of query-to-single-message relevance scoring,
 miss: "Where did I complete my Bachelor's degree in Computer Science?", where the evidence is a message that starts
 by weighing the cost of a graduate program and mentions the old degree only in passing. Closing the gap likely needs context the message alone doesn't carry (its session, neighbouring
 turns), not a bigger generic re-ranker. For the app, the 23M default stays: nothing larger is better, and it is the
-fastest. Lab repo `kaggle/rerank-topn/` (`build_models_kernel.py`, `score_models.py`, `oracle.py`, summaries). The app keeps N=30 as the default; `RERANK_TOP_N=50` is a cheap
+fastest.
+
+Two context fixes, same top 30, MiniLM-L-6 unless noted (all-evidence at 4k vs 70.6 truncated to 2,000 chars): scoring
+the best 1,200-char window of the whole message (MaxP; a third of candidates are longer than 2,000 chars) 69.7;
+prefixing the previous turn 68.1; both 71.2 (16 / 13, n.s.); `bge-reranker-v2-m3` reading up to 6,000 chars 67.2
+(14 / 30, p=0.02). So truncation isn't it either.
+
+What does help a little is *whose* message it is. 94% of evidence messages are the user's own turns (842 of 896),
+but 63% of the top-30 candidates are assistant replies, which re-rankers trained on web search score highly because
+they are long and on-topic. Adding a constant to user turns (unless the question asks what the assistant said:
+"you ... said / recommended / ...", 42 questions), with the constant picked on half the questions:
+
+| all evidence | 2k | 4k | 8k | 16k |
+|---|---|---|---|---|
+| re-rank | 43.4 | 70.6 | 84.1 | 89.1 |
+| + user-turn prior (B=3) | 44.5 | **72.9** | 84.1 | 88.3 |
+| fixed / broken | 10 / 5 | 16 / 5 (p=0.03) | 6 / 6 | 2 / 6 |
+
+On the held-out half alone: 72.8 → 75.7 at 4k (9 / 2, p=0.07). A small, budget-specific gain. It partly reflects how
+LongMemEval labels evidence (on user turns by construction), so treat it as a hint for apps whose questions are about
+the user, not a general rule. The gap to the 83.9 ceiling remains open. Lab repo `kaggle/rerank-topn/`
+(`build_context_kernel.py`, `score_context.py`, `role_prior.py`, summaries). Lab repo `kaggle/rerank-topn/` (`build_models_kernel.py`, `score_models.py`, `oracle.py`, summaries). The app keeps N=30 as the default; `RERANK_TOP_N=50` is a cheap
 +1 point. Lab repo `kaggle/rerank-topn/` (kernel builder, scorer, `topn_summary.json`).
 
 ### Follow-up: embedding unit size
