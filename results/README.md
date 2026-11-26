@@ -392,7 +392,8 @@ What it shows:
 Consequence: for chat memory with a small reader, spend compute on a re-ranker over a wide candidate set
 and give the reader a mid-sized context (8k here), rather than widening the context. Lab repo
 `kaggle/reranker/`: `build_kernel.py` (kernel `lme-reranker`, private), `score_recall.py`,
-`score_answers.py`, `recall_summary.json`, `answer_accuracy_summary.json`.
+`score_answers.py`, `recall_summary.json`, `answer_accuracy_summary.json`. Public notebook (reproduces these tables
+from the saved per-question outputs, CPU): [kaggle.com/code/deepanjalshukla95/more-context-didn-t-help-a-re-ranker-did](https://www.kaggle.com/code/deepanjalshukla95/more-context-didn-t-help-a-re-ranker-did).
 
 ## Inconclusive: a "stronger" reader (Qwen3-8B, 4-bit) and a judge audit
 
