@@ -137,9 +137,11 @@ everything the search returns. At N=30 the GPU copy reproduces the app's q8 run 
 Diminishing returns: going from 30 to 100 candidates adds 1.4 points at 4k for about 3x the latency, and past 100
 nothing changes. So depth is not what holds back the remaining *ranked too low* misses: of the 172 missing evidence
 sessions that are in the ranking at all (N=30, 4k), 116 (67%) were already among the 30 candidates, and this small
-re-ranker didn't score them high enough. The next gain has to come from a better scorer
-(the GPU-sized `bge-reranker-v2-m3` reaches 71.4 at N=100 from a stronger base) or from fusing the re-ranker score with
-the first-stage rank, not from re-ranking more. The app keeps N=30 as the default; `RERANK_TOP_N=50` is a cheap
+re-ranker didn't score them high enough. Fusing the two orders doesn't help either: RRF
+(k=60) of the BM25 order and the re-ranker order *lowers* all-evidence recall at 4k to 66.2 (N=30; 7 fixed / 28
+broken vs plain re-ranking, p=0.0005), and N=50 or 100 doesn't rescue it (66.4). BM25's order is mostly what the
+re-ranker is correcting, so mixing it back in undoes the fix. The next gain has to come from a better scorer (the
+GPU-sized `bge-reranker-v2-m3` reaches 71.4 at N=100 from a stronger base), not from more depth or fusion. The app keeps N=30 as the default; `RERANK_TOP_N=50` is a cheap
 +1 point. Lab repo `kaggle/rerank-topn/` (kernel builder, scorer, `topn_summary.json`).
 
 ### Follow-up: embedding unit size
