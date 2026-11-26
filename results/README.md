@@ -117,7 +117,9 @@ app's own `search()` (`RERANKER=local`).
 
 All differences in the all-evidence row are significant (sign test, p < 0.005). This is about the same gain as the
 much larger `bge-reranker-v2-m3` on a GPU (63.0 → 71.4 at 4k, below), from a model that runs on a laptop. The cost
-is latency: a median 3.3 s per search on a laptop CPU, so the app ships it switched off. Lab repo
+is latency: a median 3.3 s per search on a laptop CPU, so the app ships it switched off. Re-running `mrb report`
+on the re-ranked search: misses at 4k fall from 188 to 143, and *ranked too low* from 153 to 111. It is still the
+largest cause, so the next lever is re-ranking more than 30 candidates (at a latency cost). Lab repo
 `kaggle/longmemeval-full/score_rerank.py`; rankings come from the app's `scripts/bench-rankings.ts --rerank`.
 
 ### Follow-up: embedding unit size
