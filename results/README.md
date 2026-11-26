@@ -122,6 +122,26 @@ on the re-ranked search: misses at 4k fall from 188 to 143, and *ranked too low*
 largest cause, so the next lever is re-ranking more than 30 candidates (at a latency cost). Lab repo
 `kaggle/longmemeval-full/score_rerank.py`; rankings come from the app's `scripts/bench-rankings.ts --rerank`.
 
+**How many candidates to re-rank.** The same model (original `cross-encoder/ms-marco-MiniLM-L-6-v2` weights, fp32 on
+a Kaggle GPU) re-scoring the top N of the app's own BM25 rankings. Rankings stop at 200, so N=200 re-ranks
+everything the search returns. At N=30 the GPU copy reproduces the app's q8 run within half a point (70.6 vs 70.1 at
+4k), so the port is faithful. Latency is the re-ranker alone on the same laptop CPU (q8, 10 searches each).
+
+| N | all evidence, 2k | 4k | 8k | 16k | vs N=30 at 4k (fixed / broken) | re-ranker latency, median |
+|---|---|---|---|---|---|---|
+| 30 | 43.4 | 70.6 | 84.1 | 89.1 | | 2.7 s |
+| 50 | 44.1 | 71.6 | 85.2 | 90.6 | 6 / 1 (p=0.13) | 4.7 s |
+| 100 | 44.3 | **72.0** | **85.8** | 91.2 | 8 / 1 (p=0.04) | 8.6 s |
+| 200 | 44.3 | 72.0 | 85.8 | 91.4 | 8 / 1 | 17.6 s |
+
+Diminishing returns: going from 30 to 100 candidates adds 1.4 points at 4k for about 3x the latency, and past 100
+nothing changes. So depth is not what holds back the remaining *ranked too low* misses: of the 172 missing evidence
+sessions that are in the ranking at all (N=30, 4k), 116 (67%) were already among the 30 candidates, and this small
+re-ranker didn't score them high enough. The next gain has to come from a better scorer
+(the GPU-sized `bge-reranker-v2-m3` reaches 71.4 at N=100 from a stronger base) or from fusing the re-ranker score with
+the first-stage rank, not from re-ranking more. The app keeps N=30 as the default; `RERANK_TOP_N=50` is a cheap
++1 point. Lab repo `kaggle/rerank-topn/` (kernel builder, scorer, `topn_summary.json`).
+
 ### Follow-up: embedding unit size
 
 With on-device embeddings (`bge-small-en-v1.5`) fused into the same BM25 search, the gain was smaller than this
