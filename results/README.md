@@ -189,6 +189,31 @@ K=2 costs 5 points at 8k and 16k (3 / 28, p<0.001). This matches the earlier ses
 `kaggle/rerank-topn/` (`build_context_kernel.py`, `score_context.py`, `role_prior.py`, `session_cap.py`, summaries). Lab repo `kaggle/rerank-topn/` (`build_models_kernel.py`, `score_models.py`, `oracle.py`, summaries). The app keeps N=30 as the default; `RERANK_TOP_N=50` is a cheap
 +1 point. Lab repo `kaggle/rerank-topn/` (kernel builder, scorer, `topn_summary.json`).
 
+**Packing, not ranking.** Many of the remaining temporal misses had every evidence message in the top 5 (e.g. ranks
+0 and 3), so the ranking was fine. The context is the problem. Every number on this page uses the bench's standard
+packing: half the budget for the most recent messages (`recent_share=0.5`), and each hit brings its reply partner
+(`pair=True`). On LongMemEval the question never concerns the latest session in particular, and assistant replies are
+long, so at 4k only about 2,000 tokens (2 to 4 exchanges) go to retrieved hits. Same ranking (re-rank + user-turn prior),
+different packing, all evidence:
+
+| packing | 2k | 4k | 8k | 16k | temporal, 4k |
+|---|---|---|---|---|---|
+| recent 50%, pairs (standard) | 44.5 | 72.9 | 84.1 | 88.3 | 65.2 |
+| recent 25%, pairs | 62.8 | 80.0 | 86.4 | 90.0 | 72.0 |
+| **no recent window, pairs** | **68.3** | **83.1** | **87.5** | **91.2** | **76.5** |
+| no recent window, hits only (no reply partner) | 83.5 | 84.3 | 85.6 | 88.5 | 83.3 |
+| fixed / broken, no window + pairs vs standard | 115 / 1 | 50 / 1 | 16 / 0 | 14 / 0 | |
+
+Dropping the recent window keeps whole exchanges and costs almost nothing: 1 question broken at 4k, none at 8k or 16k.
+At 4k it reaches 83.1, about the 83.9 "perfect re-ranker" ceiling above under standard packing. Plain `recent+bm25`
+shows the same effect (4k: 60.8 → 73.3 with no window; 16k: 82.3 → 87.3), so it isn't specific to the re-ranker.
+Hits without their replies score higher still at 2k, but recall can't judge that: the reader then sees only the user's
+side of each exchange. Two caveats. First, this is about LongMemEval: in a live chat the current conversation is what
+the user is talking about, and an app should keep it (most send it separately from retrieved memory, which is what
+`recent_share=0` models). Second, recall isn't accuracy (see the answer-accuracy section). An accuracy run of the
+two pair packings at 4k and 8k is in progress (Kaggle kernel `lme-packing-accuracy`). Lab repo
+`kaggle/rerank-topn/packing.py`, `packing_bm25.py`, summaries; `kaggle/packing-accuracy/`.
+
 ### Follow-up: embedding unit size
 
 With on-device embeddings (`bge-small-en-v1.5`) fused into the same BM25 search, the gain was smaller than this
