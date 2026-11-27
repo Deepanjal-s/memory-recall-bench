@@ -192,8 +192,8 @@ K=2 costs 5 points at 8k and 16k (3 / 28, p<0.001). This matches the earlier ses
 **Packing, not ranking.** Many of the remaining temporal misses had every evidence message in the top 5 (e.g. ranks
 0 and 3), so the ranking was fine. The context is the problem. Every number on this page uses the bench's standard
 packing: half the budget for the most recent messages (`recent_share=0.5`), and each hit brings its reply partner
-(`pair=True`). On LongMemEval the question never concerns the latest session in particular, and assistant replies are
-long, so at 4k only about 2,000 tokens (2 to 4 exchanges) go to retrieved hits. Same ranking (re-rank + user-turn prior),
+(`pair=True`). On LongMemEval that recent window rarely holds evidence (5 of 479 questions at 4k, 56 at 16k), and
+assistant replies are long, so at 4k only about 2,000 tokens (2 to 4 exchanges) go to retrieved hits. Same ranking (re-rank + user-turn prior),
 different packing, all evidence:
 
 | packing | 2k | 4k | 8k | 16k | temporal, 4k |
