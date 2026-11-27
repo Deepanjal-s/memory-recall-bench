@@ -183,7 +183,8 @@ at 4k were "ranked too low", which is what pointed to a re-ranker.
 
 By default half of each budget holds the most recent messages (`--recent-share 0.5`). If your app sends the
 live conversation separately, pass `--recent-share 0` (also on `mrb check`) so the whole budget goes to your
-ranking. On LongMemEval that alone lifted all-evidence recall at 4k from 72.9% to 83.1% for the same ranking
+ranking. On LongMemEval that lifted all-evidence recall at 4k from 72.9% to 83.1% for the same ranking, but
+judged answer accuracy didn't change (64.3% vs 63.3%), so measure answers before adopting it
 ([results](results/README.md)).
 On the default `mrb` command, `--recent-share` sets the recent-window fraction for built-in adapters such as
 `recent+bm25` and `recent+random`.

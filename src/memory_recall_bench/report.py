@@ -107,8 +107,8 @@ def fixes(causes: Counter, n_miss: int, n_incomplete: int, recent_share: float =
     if recent_share > 0 and (share(LOW) > 0 or causes.get("mixed")):
         out.append(f"{recent_share:.0%} of the budget goes to the most recent messages, so ranked evidence competes "
                    "for the rest. If your app sends the live conversation separately, rerun with --recent-share 0: "
-                   "on LongMemEval that alone lifted all-evidence recall at 4k from 72.9% to 83.1% with the same "
-                   "ranking.")
+                   "on LongMemEval that lifted all-evidence recall at 4k from 72.9% to 83.1% with the same "
+                   "ranking, though answer accuracy didn't change, so check answers too.")
     if causes.get("mixed"):
         out.append(f"{causes['mixed']} misses have mixed causes (one session never found, another ranked too low).")
     return out

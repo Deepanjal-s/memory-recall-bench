@@ -210,8 +210,20 @@ shows the same effect (4k: 60.8 → 73.3 with no window; 16k: 82.3 → 87.3), so
 Hits without their replies score higher still at 2k, but recall can't judge that: the reader then sees only the user's
 side of each exchange. Two caveats. First, this is about LongMemEval: in a live chat the current conversation is what
 the user is talking about, and an app should keep it (most send it separately from retrieved memory, which is what
-`recent_share=0` models). Second, recall isn't accuracy (see the answer-accuracy section). An accuracy run of the
-two pair packings at 4k and 8k is in progress (Kaggle kernel `lme-packing-accuracy`). Lab repo
+`recent_share=0` models). Second, recall isn't accuracy, and here it didn't carry over. Same Qwen3-4B reader and judge as the
+answer-accuracy section, all 479 questions (Kaggle kernel `lme-packing-accuracy`):
+
+| packing (pairs kept) | all evidence, 4k | accuracy, 4k | all evidence, 8k | accuracy, 8k |
+|---|---|---|---|---|
+| recent 50% (standard) | 72.9 | **64.3** | 84.1 | **62.6** |
+| no recent window | **83.1** | 63.3 | **87.5** | 62.0 |
+| fixed / broken (accuracy) | | 34 / 39 (p=0.64) | | 37 / 40 (p=0.82) |
+
+Ten more points of all-evidence recall at 4k bought no accuracy; temporal questions, whose recall rose most
+(65 → 77), went 46.2 → 43.9. When all evidence was present, accuracy was lower without the window (72.6 vs
+77.9 at 4k): the freed budget fills with more retrieved near-misses, the same distractor effect as 4k vs 16k
+above. So the recent window wasn't the bottleneck for answers, and `--recent-share 0` is a recall setting
+to measure with, not a recommended change on its own. Lab repo
 `kaggle/rerank-topn/packing.py`, `packing_bm25.py`, summaries; `kaggle/packing-accuracy/`. Fixed after review: the reply partner was the adjacent message in the stream, which at a session boundary (0.8% of LongMemEval pairs) could be the previous session's last message with the same role. Pairs now take only an opposite-role neighbour; the numbers in this section and the BM25 baseline are unchanged to one decimal.
 
 ### Follow-up: embedding unit size
