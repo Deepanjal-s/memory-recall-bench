@@ -61,3 +61,12 @@ def test_writes_github_step_summary(tmp_path, monkeypatch):
     monkeypatch.setenv("GITHUB_STEP_SUMMARY", str(summary))
     main(["check", "--adapter", "recent+bm25", "--limit", "3", "--budget", "2k"])
     assert "Retrieval check" in summary.read_text()
+
+
+def test_check_accepts_recent_share(tmp_path, capsys):
+    from memory_recall_bench.datasets import synthetic
+    convs = synthetic(n=10)
+    r = {c.id: [m.id for m in c.messages if m.id in c.evidence_ids] for c in convs}
+    (tmp_path / "r.json").write_text(json.dumps(r))
+    assert main(["check", "--rankings", str(tmp_path / "r.json"), "--limit", "10", "--budget", "1k",
+                 "--recent-share", "0", "--min-recall", "1.0"]) == 0

@@ -64,3 +64,13 @@ def test_html_escapes_content(tmp_path):
                        "groups": [{"status": NEVER, "best_rank": None}]}]}
     page = to_html(rep)
     assert "<script>" not in page and "&lt;script&gt;" in page and "<b>x</b>" not in page
+
+
+def test_recent_share_zero_gives_ranking_the_whole_budget(tmp_path):
+    convs = synthetic(n=12)
+    path = str(_rankings(convs, tmp_path / "r.json", evidence_last=False))
+    half = build(convs, path, [1000], 1000)
+    whole = build(convs, path, [1000], 1000, recent_share=0.0)
+    assert whole["curve"][1000]["all"] >= half["curve"][1000]["all"]
+    assert whole["recent_share"] == 0.0
+    assert not any("--recent-share 0" in f for f in whole["fixes"])

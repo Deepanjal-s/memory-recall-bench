@@ -90,10 +90,13 @@ def check_main(argv: list[str]) -> int:
     p.add_argument("--baseline", help="Baseline JSON written earlier with --write-baseline.")
     p.add_argument("--max-drop", type=float, default=0.0, help="Allowed drop below the baseline (0-1).")
     p.add_argument("--write-baseline", metavar="PATH", help="Store this run as the new baseline.")
+    p.add_argument("--recent-share", type=float, default=0.5,
+                   help="With --rankings: share of the budget kept for the most recent messages (default 0.5).")
     args = p.parse_args(argv)
 
     convs = _load(args)
-    make = (lambda: RankedFromFile(args.rankings, convs, name="yours")) if args.rankings else BUILTIN[args.adapter]
+    make = ((lambda: RankedFromFile(args.rankings, convs, name="yours", recent_share=args.recent_share))
+            if args.rankings else BUILTIN[args.adapter])
     current = evaluate(convs, make, _budget(args.budget), "recalled_all" if args.all_evidence else "recalled")
     baseline = None
     if args.baseline and Path(args.baseline).exists():

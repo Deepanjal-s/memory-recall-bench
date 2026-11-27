@@ -181,6 +181,11 @@ low** (found, but below what fits: a precision problem), and **incomplete** (som
 out). Fixes are suggested in order of the measured split. On ai-chat-memory's BM25 search, 153 of 188 misses
 at 4k were "ranked too low", which is what pointed to a re-ranker.
 
+By default half of each budget holds the most recent messages (`--recent-share 0.5`). If your app sends the
+live conversation separately, pass `--recent-share 0` (also on `mrb check`) so the whole budget goes to your
+ranking. On LongMemEval that alone lifted all-evidence recall at 4k from 72.9% to 83.1% for the same ranking
+([results](results/README.md)).
+
 ## Benchmark a system written in another language
 
 > **Real use:** this interface found a ranking bug in a Next.js + PostgreSQL app's search and measured the fix
@@ -271,6 +276,8 @@ pytest
 
 ## Changelog
 
+- **Unreleased**: `--recent-share` on `mrb report` and `mrb check` (how much of the budget the recent
+  window takes); the report suggests it when misses are ranked too low.
 - **0.6.0**: `mrb report`: one-page HTML retrieval audit (recall by budget and question type, every miss
   labelled never retrieved / ranked too low / incomplete, fixes ranked by the measured split); the Action
   uploads it as an artifact with `report: "true"`.
