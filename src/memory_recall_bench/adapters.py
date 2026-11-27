@@ -158,7 +158,9 @@ class _RecentPlusArchive:
         for m in ranked:
             group = [m]
             i = position[m.id] + (1 if m.role == "user" else -1)
-            if 0 <= i < len(self.messages):
+            # the partner is the other side of the exchange; a same-role neighbour is the edge of
+            # another session (0.8% of LongMemEval pairs), not a reply
+            if 0 <= i < len(self.messages) and self.messages[i].role != m.role:
                 group.append(self.messages[i])
             new = [g for g in group if g.id not in kept_set]
             cost = sum(g.tokens for g in new)

@@ -69,7 +69,7 @@ def test_html_escapes_content(tmp_path):
 def test_recent_share_zero_gives_ranking_the_whole_budget(tmp_path):
     # 10 messages of 10 tokens, evidence m1 and m3 ranked first, budget 40. With the default half-budget recent
     # window (m8, m9) only the m1 pair fits; with no window both pairs fit.
-    msgs = [Message(f"m{i}", "user", f"text {i}", 10) for i in range(10)]
+    msgs = [Message(f"m{i}", "user" if i % 2 == 0 else "assistant", f"text {i}", 10) for i in range(10)]
     conv = Conversation("c", msgs, "q?", "a", frozenset({"m1", "m3"}), kind="multi-session",
                         evidence_groups=(frozenset({"m1"}), frozenset({"m3"})))
     path = tmp_path / "r.json"

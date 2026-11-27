@@ -214,3 +214,17 @@ def test_export_is_one_line_per_conversation_even_with_unicode_line_separators(t
     assert lines[-1] == "" and len(lines) == 3
     assert json.loads(lines[0])["sessions"][0]["messages"][0]["content"] == tricky
     assert len(text.splitlines()) == 2  # splitlines() also splits on U+2028 etc.; must still be 2
+
+
+def test_pairs_skip_a_same_role_neighbour():
+    # an assistant message that opens a session must not drag in the previous session's last assistant reply
+    from memory_recall_bench.adapters import RecentPlusBM25
+    from memory_recall_bench.types import Message
+    a = RecentPlusBM25(recent_share=0.0)
+    a.reset(100)
+    msgs = [Message("s1:0", "user", "hello", 10), Message("s1:1", "assistant", "hi there", 10),
+            Message("s2:0", "assistant", "zebra facts", 10), Message("s2:1", "user", "thanks", 10)]
+    for m in msgs:
+        a.add(m)
+    kept = a.context("zebra")
+    assert "s2:0" in kept and "s1:1" not in kept

@@ -280,6 +280,7 @@ pytest
 
 - **Unreleased**: `--recent-share` on `mrb`, `mrb report`, and `mrb check` (how much of the budget the recent
   window takes); the report suggests it when misses are ranked too low.
+  Reply pairs no longer take a same-role neighbour from another session (published numbers unchanged).
 - **0.6.0**: `mrb report`: one-page HTML retrieval audit (recall by budget and question type, every miss
   labelled never retrieved / ranked too low / incomplete, fixes ranked by the measured split); the Action
   uploads it as an artifact with `report: "true"`.

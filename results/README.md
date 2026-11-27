@@ -212,7 +212,7 @@ side of each exchange. Two caveats. First, this is about LongMemEval: in a live 
 the user is talking about, and an app should keep it (most send it separately from retrieved memory, which is what
 `recent_share=0` models). Second, recall isn't accuracy (see the answer-accuracy section). An accuracy run of the
 two pair packings at 4k and 8k is in progress (Kaggle kernel `lme-packing-accuracy`). Lab repo
-`kaggle/rerank-topn/packing.py`, `packing_bm25.py`, summaries; `kaggle/packing-accuracy/`. Known quirk (found in review): the reply partner is the adjacent message in the stream, which at a session boundary can be the previous session's last message. It affects every packing on this page the same way, so the paired comparisons stand; a session-aware pair is a planned fix.
+`kaggle/rerank-topn/packing.py`, `packing_bm25.py`, summaries; `kaggle/packing-accuracy/`. Fixed after review: the reply partner was the adjacent message in the stream, which at a session boundary (0.8% of LongMemEval pairs) could be the previous session's last message with the same role. Pairs now take only an opposite-role neighbour; the numbers in this section and the BM25 baseline are unchanged to one decimal.
 
 ### Follow-up: embedding unit size
 
