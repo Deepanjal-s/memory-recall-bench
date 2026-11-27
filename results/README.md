@@ -205,14 +205,14 @@ different packing, all evidence:
 | fixed / broken, no window + pairs vs standard | 115 / 1 | 50 / 1 | 16 / 0 | 14 / 0 | |
 
 Dropping the recent window keeps whole exchanges and costs almost nothing: 1 question broken at 4k, none at 8k or 16k.
-At 4k it reaches 83.1, about the 83.9 "perfect re-ranker" ceiling above under standard packing. Plain `recent+bm25`
+At 4k it reaches 83.1, about the 83.9 of the evidence-first ordering above under standard packing (that ordering is a reference point, not a strict ceiling: greedy packing can still waste budget on a second message from the same evidence session). Plain `recent+bm25`
 shows the same effect (4k: 60.8 → 73.3 with no window; 16k: 82.3 → 87.3), so it isn't specific to the re-ranker.
 Hits without their replies score higher still at 2k, but recall can't judge that: the reader then sees only the user's
 side of each exchange. Two caveats. First, this is about LongMemEval: in a live chat the current conversation is what
 the user is talking about, and an app should keep it (most send it separately from retrieved memory, which is what
 `recent_share=0` models). Second, recall isn't accuracy (see the answer-accuracy section). An accuracy run of the
 two pair packings at 4k and 8k is in progress (Kaggle kernel `lme-packing-accuracy`). Lab repo
-`kaggle/rerank-topn/packing.py`, `packing_bm25.py`, summaries; `kaggle/packing-accuracy/`.
+`kaggle/rerank-topn/packing.py`, `packing_bm25.py`, summaries; `kaggle/packing-accuracy/`. Known quirk (found in review): the reply partner is the adjacent message in the stream, which at a session boundary can be the previous session's last message. It affects every packing on this page the same way, so the paired comparisons stand; a session-aware pair is a planned fix.
 
 ### Follow-up: embedding unit size
 

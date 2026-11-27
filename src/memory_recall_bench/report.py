@@ -20,6 +20,7 @@ from collections import Counter
 from pathlib import Path
 
 from .check import _budget, _load
+from .cli import recent_share_arg
 from .external import RankedFromFile
 from .runner import run
 
@@ -103,7 +104,7 @@ def fixes(causes: Counter, n_miss: int, n_incomplete: int, recent_share: float =
     ]
     for _, text in sorted(items, key=lambda x: -x[0]):
         out.append(text)
-    if recent_share > 0 and share(LOW) > 0:
+    if recent_share > 0 and (share(LOW) > 0 or causes.get("mixed")):
         out.append(f"{recent_share:.0%} of the budget goes to the most recent messages, so ranked evidence competes "
                    "for the rest. If your app sends the live conversation separately, rerun with --recent-share 0: "
                    "on LongMemEval that alone lifted all-evidence recall at 4k from 72.9% to 83.1% with the same "
@@ -168,7 +169,7 @@ def report_main(argv: list[str]) -> int:
     p.add_argument("--examples", type=int, default=25)
     p.add_argument("--out", default="retrieval-report.html")
     p.add_argument("--json", help="Also write the raw report data here.")
-    p.add_argument("--recent-share", type=float, default=0.5,
+    p.add_argument("--recent-share", type=recent_share_arg, default=0.5,
                    help="Share of the budget kept for the most recent messages (default 0.5). 0 gives the whole "
                         "budget to your ranking, as when the app sends the live conversation separately.")
     args = p.parse_args(argv)

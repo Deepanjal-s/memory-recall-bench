@@ -70,3 +70,10 @@ def test_check_accepts_recent_share(tmp_path, capsys):
     (tmp_path / "r.json").write_text(json.dumps(r))
     assert main(["check", "--rankings", str(tmp_path / "r.json"), "--limit", "10", "--budget", "1k",
                  "--recent-share", "0", "--min-recall", "1.0"]) == 0
+
+
+@pytest.mark.parametrize("share", ["1.5", "nan", "x"])
+def test_check_rejects_invalid_recent_share(share, capsys):
+    with pytest.raises(SystemExit) as exc:
+        main(["check", "--adapter", "recent+bm25", "--limit", "2", "--recent-share", share])
+    assert exc.value.code == 2

@@ -185,6 +185,8 @@ By default half of each budget holds the most recent messages (`--recent-share 0
 live conversation separately, pass `--recent-share 0` (also on `mrb check`) so the whole budget goes to your
 ranking. On LongMemEval that alone lifted all-evidence recall at 4k from 72.9% to 83.1% for the same ranking
 ([results](results/README.md)).
+On the default `mrb` command, `--recent-share` sets the recent-window fraction for built-in adapters such as
+`recent+bm25` and `recent+random`.
 
 ## Benchmark a system written in another language
 
@@ -276,7 +278,7 @@ pytest
 
 ## Changelog
 
-- **Unreleased**: `--recent-share` on `mrb report` and `mrb check` (how much of the budget the recent
+- **Unreleased**: `--recent-share` on `mrb`, `mrb report`, and `mrb check` (how much of the budget the recent
   window takes); the report suggests it when misses are ranked too low.
 - **0.6.0**: `mrb report`: one-page HTML retrieval audit (recall by budget and question type, every miss
   labelled never retrieved / ranked too low / incomplete, fixes ranked by the measured split); the Action

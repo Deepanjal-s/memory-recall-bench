@@ -67,10 +67,15 @@ def test_html_escapes_content(tmp_path):
 
 
 def test_recent_share_zero_gives_ranking_the_whole_budget(tmp_path):
-    convs = synthetic(n=12)
-    path = str(_rankings(convs, tmp_path / "r.json", evidence_last=False))
-    half = build(convs, path, [1000], 1000)
-    whole = build(convs, path, [1000], 1000, recent_share=0.0)
-    assert whole["curve"][1000]["all"] >= half["curve"][1000]["all"]
-    assert whole["recent_share"] == 0.0
-    assert not any("--recent-share 0" in f for f in whole["fixes"])
+    # 10 messages of 10 tokens, evidence m1 and m3 ranked first, budget 40. With the default half-budget recent
+    # window (m8, m9) only the m1 pair fits; with no window both pairs fit.
+    msgs = [Message(f"m{i}", "user", f"text {i}", 10) for i in range(10)]
+    conv = Conversation("c", msgs, "q?", "a", frozenset({"m1", "m3"}), kind="multi-session",
+                        evidence_groups=(frozenset({"m1"}), frozenset({"m3"})))
+    path = tmp_path / "r.json"
+    path.write_text(json.dumps({"c": ["m1", "m3"]}))
+    half = build([conv], str(path), [40], 40)
+    whole = build([conv], str(path), [40], 40, recent_share=0.0)
+    assert half["curve"][40]["all"] == 0.0 and whole["curve"][40]["all"] == 1.0
+    assert any("--recent-share 0" in f for f in half["fixes"])
+    assert whole["recent_share"] == 0.0 and not whole["misses"]

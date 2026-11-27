@@ -3,8 +3,9 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from functools import partial
 
-from .adapters import BUILTIN
+from .adapters import BUILTIN, _RecentPlusArchive
 from .datasets import load_longmemeval, synthetic
 from .runner import run, summarize, to_records
 
@@ -15,6 +16,17 @@ def _budgets(text: str) -> list[int]:
         part = part.strip().lower()
         out.append(int(float(part[:-1]) * 1000) if part.endswith("k") else int(part))
     return out
+
+
+def recent_share_arg(text: str) -> float:
+    message = "must be a number between 0 and 1 inclusive"
+    try:
+        share = float(text)
+    except ValueError:
+        raise argparse.ArgumentTypeError(message) from None
+    if not 0 <= share <= 1:
+        raise argparse.ArgumentTypeError(message)
+    return share
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -36,18 +48,32 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--budgets", default="2k,8k,32k", help="Comma-separated, e.g. 2k,8k,32000")
     p.add_argument("--adapters", default="fifo,flush,recent+random,recent+bm25",
                    help=f"Comma-separated from: {', '.join(BUILTIN)}")
+    p.add_argument("--recent-share", type=recent_share_arg,
+                   help="Fraction of the budget reserved for recent messages in adapters with a recent window "
+                        "(default: 0.5).")
     p.add_argument("--by-kind", action="store_true", help="One table per question type.")
     p.add_argument("--all-evidence", action="store_true",
                    help="Count a hit only if evidence from every answer session is in context.")
     p.add_argument("--json", metavar="PATH", help="Also write per-conversation results as JSON.")
     args = p.parse_args(argv)
 
-    unknown = [a for a in args.adapters.split(",") if a not in BUILTIN]
+    names = args.adapters.split(",")
+    unknown = [a for a in names if a not in BUILTIN]
     if unknown:
         p.error(f"unknown adapters: {', '.join(unknown)}")
 
+    factories = [BUILTIN[a] for a in names]
+    if args.recent_share is not None:
+        recent = {factory for factory in factories
+                  if isinstance(factory, type) and issubclass(factory, _RecentPlusArchive)}
+        if not recent:
+            print("Note: --recent-share has no effect because the selected adapters have no configurable recent window.",
+                  file=sys.stderr)
+        factories = [partial(factory, recent_share=args.recent_share) if factory in recent else factory
+                     for factory in factories]
+
     convs = load_longmemeval(args.data, limit=args.limit) if args.data else synthetic(n=args.limit or 20)
-    results = run([BUILTIN[a] for a in args.adapters.split(",")], convs, _budgets(args.budgets))
+    results = run(factories, convs, _budgets(args.budgets))
     metric = "recalled_all" if args.all_evidence else "recalled"
     rows = summarize(results, by_kind=args.by_kind, metric=metric)
 
