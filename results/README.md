@@ -574,6 +574,9 @@ B=3), same Qwen3-4B-Instruct-2507 reader and judge, reply pairs kept. The top-k 
   is a post-hoc split (conditioned on annotated-evidence recall in both arms), so it breaks down the 53/33
   result rather than adding an independent test. It fits the reading that the extra 21 messages per question
   act as distractors, but it does not isolate that cause. Script: lab `kaggle/precision-packing/mechanism.py`.
+- **Per-kind k doesn't pay (checked offline).** Top-5 is best or tied on every question kind except
+  multi-session, where top-10 scores 47.2 vs 44.0 (11 fixed / 7 broken, p=0.48). Even an oracle that knew
+  each question's kind and used top-10 only for multi-session would reach 67.0 vs 66.2. Not pursued.
 - Where to look next: an adaptive cut (stop adding hits when the re-ranker score drops) instead of a fixed k,
   and the per-kind split (multi-session gains at top-10, 47.2 vs 40.8 for the control; preference gains at top-5).
 - Caveats: one reader model (4B); the control differs from the earlier packing run's control on 12 of 479
