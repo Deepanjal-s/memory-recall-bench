@@ -546,3 +546,32 @@ time, mostly where the refusal still contains part of the answer. The published 
 with roughly ±2–3 points of judge noise. Paired comparisons are less affected, because both arms share it.
 Future kernels drop non-answers like `[OOM]` before judging. Lab repo `kaggle/stronger-reader/`:
 `build_kernel.py` (kernel `lme-stronger-reader`, private), `score_compare.py`.
+
+## Precision-limited packing: fewer, better hits answer better (all 479, Kaggle GPU)
+
+The packing run above raised recall but not accuracy, and the answer-accuracy run showed distractors hurt a
+small reader. So this run caps **how many** ranked hits go into the context instead of filling the budget.
+Same ranking for every arm (ai-chat-memory keyword search, top 30 re-ranked by MiniLM-L-6 + user-turn prior
+B=3), same Qwen3-4B-Instruct-2507 reader and judge, reply pairs kept. The top-k and full-ranking arms use no recent window and an 8k cap; the control is standard packing at 4k.
+
+| Arm | Mean messages | All-evidence recall | Accuracy | vs full 8k (fixed/broken, sign test) |
+|---|---:|---:|---:|---|
+| top 5 hits | 8.3 | 77.2 | **66.2** | 53/33, p=0.040 |
+| top 10 hits | 15.7 | 84.8 | 65.1 | 45/30, p=0.11 |
+| top 20 hits | 26.6 | 87.3 | 63.0 | 20/15, p=0.50 |
+| full ranking, 8k (matched comparator) | 29.7 | 87.5 | 62.0 | — |
+| control: standard packing, recent_share=0.5, 4k | 17.9 | 72.9 | 64.1 | 51/41, p=0.35 |
+
+- **Accuracy falls as hits are added** (66.2 → 65.1 → 63.0 → 62.0) while recall rises (77.2 → 87.5). Top-5 is
+  the best accuracy measured in this repo so far (previous best: re-ranked hybrid at 8k, 64.9).
+- Top-5 vs the matched full-8k context is the one comparison that clears p<0.05 (p=0.040). It is one of four
+  comparisons against that arm, so read it as good evidence of direction, not a proven effect size. Top-5 vs
+  the 4k control: 38/28, p=0.27.
+- Where to look next: an adaptive cut (stop adding hits when the re-ranker score drops) instead of a fixed k,
+  and the per-kind split (multi-session gains at top-10, 47.2 vs 40.8 for the control; preference gains at top-5).
+- Caveats: one reader model (4B); the control differs from the earlier packing run's control on 12 of 479
+  contexts because of the reply-pair fix in 8c7fac3 (accuracy 64.1 here vs 64.3 there). A rebuilt matched arm
+  with the newer worker template (repeated sessions dated by first occurrence) gave the same 62.0.
+
+Lab repo `kaggle/precision-packing/`: `build_kernel.py` (kernels `lme-precision-packing` and
+`lme-precision-packing-matched` via `--matched`, private), `score_answers.py`, `precision_packing_summary.json`.
