@@ -567,6 +567,13 @@ B=3), same Qwen3-4B-Instruct-2507 reader and judge, reply pairs kept. The top-k 
 - Top-5 vs the matched full-8k context is the one comparison that clears p<0.05 (p=0.040). It is one of four
   comparisons against that arm, so read it as good evidence of direction, not a proven effect size. Top-5 vs
   the 4k control: 38/28, p=0.27.
+- **Where the gain shows up: questions where both contexts already hold the evidence.** On the 370 questions
+  where *both* the top-5 and the full-8k contexts hold all evidence, top-5 answers 78.1% vs 72.4% (41 fixed /
+  20 broken, p=0.010). Of the 86 questions where the two arms disagree, 61 have all evidence in both contexts;
+  only 9 of the 33 top-5 losses are questions where top-5 dropped evidence that the full context kept. This
+  is a post-hoc split (conditioned on annotated-evidence recall in both arms), so it breaks down the 53/33
+  result rather than adding an independent test. It fits the reading that the extra 21 messages per question
+  act as distractors, but it does not isolate that cause. Script: lab `kaggle/precision-packing/mechanism.py`.
 - Where to look next: an adaptive cut (stop adding hits when the re-ranker score drops) instead of a fixed k,
   and the per-kind split (multi-session gains at top-10, 47.2 vs 40.8 for the control; preference gains at top-5).
 - Caveats: one reader model (4B); the control differs from the earlier packing run's control on 12 of 479
