@@ -580,5 +580,9 @@ B=3), same Qwen3-4B-Instruct-2507 reader and judge, reply pairs kept. The top-k 
   contexts because of the reply-pair fix in 8c7fac3 (accuracy 64.1 here vs 64.3 there). A rebuilt matched arm
   with the newer worker template (repeated sessions dated by first occurrence) gave the same 62.0.
 
+Public notebook that recomputes these tables from the saved per-question outputs:
+https://www.kaggle.com/code/deepanjalshukla95/fewer-better-passages-beat-more-context (data:
+https://www.kaggle.com/datasets/deepanjalshukla95/lme-precision-packing-results).
+
 Lab repo `kaggle/precision-packing/`: `build_kernel.py` (kernels `lme-precision-packing` and
 `lme-precision-packing-matched` via `--matched`, private), `score_answers.py`, `precision_packing_summary.json`.
