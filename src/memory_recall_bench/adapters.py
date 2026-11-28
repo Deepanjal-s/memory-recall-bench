@@ -140,21 +140,26 @@ class _RecentPlusArchive:
         archive = [m for m in self.messages if m.id not in recent_ids]
         return window, archive, used
 
-    def _fill(self, ranked: list[Message], window: list[Message], used: int) -> list[str]:
+    def _fill(self, ranked: list[Message], window: list[Message], used: int,
+              max_hits: int | None = None) -> list[str]:
         kept = [m.id for m in window]
         for m in ranked:
             if used + m.tokens <= self.budget:
                 kept.append(m.id)
                 used += m.tokens
+                if max_hits is not None and len(kept) - len(window) == max_hits:
+                    break
         return kept
 
-    def _fill_pairs(self, ranked: list[Message], window: list[Message], used: int) -> list[str]:
+    def _fill_pairs(self, ranked: list[Message], window: list[Message], used: int,
+                    max_hits: int | None = None) -> list[str]:
         """Like _fill, but each hit brings its reply partner (user -> next message,
         assistant -> previous) so retrieved exchanges stay readable. Groups that don't
         fit are skipped."""
         position = {m.id: i for i, m in enumerate(self.messages)}
         kept = [m.id for m in window]
         kept_set = set(kept)
+        hits = 0
         for m in ranked:
             group = [m]
             i = position[m.id] + (1 if m.role == "user" else -1)
@@ -170,6 +175,9 @@ class _RecentPlusArchive:
                 kept.append(g.id)
                 kept_set.add(g.id)
             used += cost
+            hits += 1
+            if hits == max_hits:
+                break
         return kept
 
 
@@ -180,9 +188,12 @@ class RankedRetriever(_RecentPlusArchive):
 
     name = "ranked"
 
-    def __init__(self, recent_share: float = 0.5, pair: bool = True):
+    def __init__(self, recent_share: float = 0.5, pair: bool = True, max_hits: int | None = None):
         super().__init__(recent_share)
+        if max_hits is not None and (isinstance(max_hits, bool) or not isinstance(max_hits, int) or max_hits < 1):
+            raise ValueError("max_hits must be a positive integer")
         self.pair = pair
+        self.max_hits = max_hits
 
     def rank(self, query: str, archive: list[Message]) -> list[Message]:  # pragma: no cover
         raise NotImplementedError
@@ -192,7 +203,8 @@ class RankedRetriever(_RecentPlusArchive):
         if not archive:
             return [m.id for m in window]
         ranked = self.rank(query, archive)
-        return self._fill_pairs(ranked, window, used) if self.pair else self._fill(ranked, window, used)
+        fill = self._fill_pairs if self.pair else self._fill
+        return fill(ranked, window, used, self.max_hits)
 
 
 class RecentPlusBM25(RankedRetriever):
@@ -228,9 +240,9 @@ def _llamaindex():
     return LlamaIndexMemory()
 
 
-def _mem0():
+def _mem0(**kwargs):
     from .integrations.mem0 import Mem0Retriever  # needs the [mem0] extra
-    return Mem0Retriever()
+    return Mem0Retriever(**kwargs)
 
 
 BUILTIN = {

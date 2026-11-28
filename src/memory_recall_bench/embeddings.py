@@ -75,8 +75,8 @@ class RecentPlusEmbedding(RankedRetriever):
     name = "recent+embed"
 
     def __init__(self, cache: EmbeddingCache, recent_share: float = 0.5, pair: bool = True,
-                 query_prefix: str = ""):
-        super().__init__(recent_share, pair)
+                 query_prefix: str = "", max_hits: int | None = None):
+        super().__init__(recent_share, pair, max_hits)
         self.cache, self.query_prefix = cache, query_prefix
 
     def similarities(self, query: str, archive: list[Message]):
@@ -97,8 +97,8 @@ class RecentPlusHybrid(RecentPlusEmbedding):
     name = "recent+hybrid"
 
     def __init__(self, cache: EmbeddingCache, recent_share: float = 0.5, pair: bool = True,
-                 query_prefix: str = "", k: int = 60):
-        super().__init__(cache, recent_share, pair, query_prefix)
+                 query_prefix: str = "", k: int = 60, max_hits: int | None = None):
+        super().__init__(cache, recent_share, pair, query_prefix, max_hits)
         self.k = k
 
     def rank(self, query: str, archive: list[Message]) -> list[Message]:

@@ -7,9 +7,36 @@ from memory_recall_bench import (
     load_longmemeval, run, summarize, synthetic,
 )
 from memory_recall_bench.cli import main
+from memory_recall_bench.adapters import RankedRetriever
+from memory_recall_bench.types import Message
 
 CONVS = synthetic(n=24, turns=150, seed=1)
 BUDGETS = [500, 2000, 6000]
+
+
+@pytest.mark.parametrize(("pair", "max_hits", "expected"), [
+    (True, 2, ["u1", "a1", "u2", "a2"]),
+    (True, None, ["u1", "a1", "u2", "a2", "u3", "a3"]),
+    (False, 2, ["u1", "a1"]),
+    (False, None, ["u1", "a1", "u2", "u3"]),
+])
+def test_ranked_packing_hit_cap(pair, max_hits, expected):
+    class FixedRanking(RankedRetriever):
+        def rank(self, query, archive):
+            return [m for m in archive if m.role == "user" or m.id == "a1"]
+
+    retriever = FixedRanking(recent_share=0, pair=pair, max_hits=max_hits)
+    retriever.reset(6)
+    for i, tokens in enumerate([7, 1, 1, 1]):
+        retriever.add(Message(f"u{i}", "user", "question", tokens))
+        retriever.add(Message(f"a{i}", "assistant", "reply", 1))
+    assert list(retriever.context("query")) == expected
+
+
+@pytest.mark.parametrize("max_hits", [0, -1, True, 1.0, "1"])
+def test_ranked_packing_validates_hit_cap(max_hits):
+    with pytest.raises(ValueError, match="positive integer"):
+        RankedRetriever(max_hits=max_hits)
 
 
 def test_adapters_satisfy_the_protocol():

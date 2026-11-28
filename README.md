@@ -189,6 +189,12 @@ judged answer accuracy didn't change (64.3% vs 63.3%), so measure answers before
 On the default `mrb` command, `--recent-share` sets the recent-window fraction for built-in adapters such as
 `recent+bm25` and `recent+random`.
 
+For small readers that are sensitive to distracting context, try `--max-hits 5 --recent-share 0`
+on `mrb run`, `mrb check`, or `mrb report`. The cap applies to ranked hits that fit the token
+budget, and their reply partners are included without using additional hit slots. (The experiment truncated
+the ranking to its first k ids instead, so a skipped hit was not replaced; contexts can differ slightly.) Compare answer
+accuracy on your own data. See [Precision-limited packing](results/README.md#precision-limited-packing-fewer-better-hits-answer-better-all-479-kaggle-gpu).
+
 ## Benchmark a system written in another language
 
 > **Real use:** this interface found a ranking bug in a Next.js + PostgreSQL app's search and measured the fix

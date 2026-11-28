@@ -44,7 +44,7 @@ class QueryExpansion(RankedRetriever):
                  k: int = 60):
         if not 0 <= protect <= 1:
             raise ValueError("protect must be between 0 and 1")
-        super().__init__(base.recent_share, base.pair)
+        super().__init__(base.recent_share, base.pair, base.max_hits)
         self.base, self.expansions, self.protect, self.k = base, expansions, protect, k
         self.name = f"{base.name}+expansion" + (f" protect={protect:g}" if protect else "")
 

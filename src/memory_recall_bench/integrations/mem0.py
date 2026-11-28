@@ -41,8 +41,9 @@ class Mem0Retriever(RankedRetriever):
 
     def __init__(self, recent_share: float = 0.5, pair: bool = True, name: str = "mem0",
                  embed_model: str = "BAAI/bge-small-en-v1.5", embed_dims: int = 384,
-                 top_k: int = 200, threshold: float = 0.1, config: dict[str, Any] | None = None):
-        super().__init__(recent_share, pair)
+                 top_k: int = 200, threshold: float = 0.1, config: dict[str, Any] | None = None,
+                 max_hits: int | None = None):
+        super().__init__(recent_share, pair, max_hits)
         self._Memory = _memory_class()
         self.name = name
         self.top_k, self.threshold = top_k, threshold

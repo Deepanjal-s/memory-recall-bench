@@ -28,7 +28,7 @@ class Rerank(RankedRetriever):
                  k: int = 60, max_chars: int | None = 2000, cache: dict | None = None):
         if top_n < 1:
             raise ValueError("top_n must be at least 1")
-        super().__init__(base.recent_share, base.pair)
+        super().__init__(base.recent_share, base.pair, base.max_hits)
         self.base, self.scorer, self.top_n, self.fuse, self.k, self.max_chars = base, scorer, top_n, fuse, k, max_chars
         self.cache = {} if cache is None else cache
         self.name = f"{base.name}+rerank" + (" rrf" if fuse else "") + f" N={top_n}"

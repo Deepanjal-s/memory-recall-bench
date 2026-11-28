@@ -40,8 +40,8 @@ class RankedFromFile(RankedRetriever):
     LongMemEval haystacks are drawn from a shared pool of sessions."""
 
     def __init__(self, path: str | Path, conversations: list[Conversation], name: str = "external",
-                 recent_share: float = 0.5, pair: bool = True):
-        super().__init__(recent_share, pair)
+                 recent_share: float = 0.5, pair: bool = True, max_hits: int | None = None):
+        super().__init__(recent_share, pair, max_hits)
         self.name = name
         rankings = json.loads(Path(path).read_text(encoding="utf-8"))
         self._by_key: dict[tuple[str, str], list[str]] = {}

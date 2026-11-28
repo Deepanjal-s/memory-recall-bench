@@ -16,11 +16,12 @@ from __future__ import annotations
 import argparse
 import json
 import os
+from functools import partial
 from pathlib import Path
 
 from .adapters import BUILTIN
 from .datasets import load_longmemeval, synthetic
-from .cli import recent_share_arg
+from .cli import max_hits_arg, recent_share_arg, supports_max_hits
 from .external import RankedFromFile, export_conversations
 from .runner import run
 
@@ -57,6 +58,8 @@ def compare(current: dict, baseline: dict | None, min_recall: float | None, max_
     """Return (ok, report lines)."""
     lines = [f"**Retrieval check**: {current['metric']} at {current['budget']} tokens, "
              f"{current['n']} questions: **{current['recall']:.1%}**"]
+    if "max_hits" in current:
+        lines.append(f"- Ranked packing: max_hits={current['max_hits']}, recent_share={current['recent_share']:g}")
     ok = True
     if min_recall is not None:
         passed = current["recall"] >= min_recall
@@ -92,13 +95,25 @@ def check_main(argv: list[str]) -> int:
     p.add_argument("--max-drop", type=float, default=0.0, help="Allowed drop below the baseline (0-1).")
     p.add_argument("--write-baseline", metavar="PATH", help="Store this run as the new baseline.")
     p.add_argument("--recent-share", type=recent_share_arg, default=0.5,
-                   help="With --rankings: share of the budget kept for the most recent messages (default 0.5).")
+                   help="Share of the budget kept for recent messages with --rankings or a ranked adapter "
+                        "using --max-hits (default 0.5).")
+    p.add_argument("--max-hits", type=max_hits_arg, metavar="N",
+                   help="Pack at most N ranked hits, plus their reply partners.")
     args = p.parse_args(argv)
 
+    if args.max_hits is not None and args.adapter and not supports_max_hits(BUILTIN[args.adapter]):
+        p.error("--max-hits requires --rankings or a ranked adapter")
     convs = _load(args)
-    make = ((lambda: RankedFromFile(args.rankings, convs, name="yours", recent_share=args.recent_share))
-            if args.rankings else BUILTIN[args.adapter])
+    if args.rankings:
+        make = partial(RankedFromFile, args.rankings, convs, name="yours",
+                       recent_share=args.recent_share, max_hits=args.max_hits)
+    elif args.max_hits is not None:
+        make = partial(BUILTIN[args.adapter], recent_share=args.recent_share, max_hits=args.max_hits)
+    else:
+        make = BUILTIN[args.adapter]
     current = evaluate(convs, make, _budget(args.budget), "recalled_all" if args.all_evidence else "recalled")
+    if args.max_hits is not None:
+        current.update(max_hits=args.max_hits, recent_share=args.recent_share)
     baseline = None
     if args.baseline and Path(args.baseline).exists():
         baseline = json.loads(Path(args.baseline).read_text(encoding="utf-8"))

@@ -44,7 +44,7 @@ class SessionBoost(RankedRetriever):
 
     def __init__(self, base: RankedRetriever, summaries: Mapping[str, str], weight: float = 1.0,
                  k: int = 60, rank_sessions: Callable[[str, list[str]], list[float]] | None = None):
-        super().__init__(base.recent_share, base.pair)
+        super().__init__(base.recent_share, base.pair, base.max_hits)
         self.base, self.summaries, self.weight, self.k = base, summaries, weight, k
         self.rank_sessions = rank_sessions or self._bm25_sessions
         self.name = f"{base.name}+sessions"
